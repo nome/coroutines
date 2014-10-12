@@ -224,7 +224,7 @@ class Transformer
 			y.define_singleton_method :yield do |args|
 				sink << args
 			end
-			y.alias_method :<<, :yield
+			y.singleton_class.instance_eval { alias_method :<<, :yield }
 			begin
 				@self.call(y)
 			rescue StopIteration

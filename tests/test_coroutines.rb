@@ -30,17 +30,27 @@ class TestCoroutines < Test::Unit::TestCase
 	end
 
 	def test_transformer
-		rs = Transformer.new do |y|
-			result = 0
-			loop { result += y.await; y.yield result }
+		def rs
+			Transformer.new do |y|
+				result = 0
+				loop { result += y.await; y.yield result }
+			end
 		end
 		assert_equal([1, 3, 6], (1..3) >= rs >= [])
-
-		rs = Transformer.new do |y|
-			result = 0
-			loop { result += y.await; y.yield result }
-		end
 		assert_equal([1, 3, 6], [] <= rs <= (1..3))
+
+		def double
+			Transformer.new do |y|
+				loop do
+					x = y.await
+					y << x << x
+				end
+			end
+		end
+		assert_equal([1,1,2,2], [] <= (double <= [1,2]))
+		assert_equal([1,1,2,2], [1,2] >= (double >= []))
+		assert_equal([1,2,4,6,9,12], (1..3) >= (double >= rs) >= [])
+		assert_equal([1,1,3,3,6,6], (1..3) >= (rs >= double) >= [])
 	end
 
 	def test_transformer_chaining

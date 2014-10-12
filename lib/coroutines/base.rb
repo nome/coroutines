@@ -223,6 +223,7 @@ class Transformer
 		consum = Consumer.new do |y|
 			y.define_singleton_method :yield do |args|
 				sink << args
+				y
 			end
 			y.singleton_class.instance_eval { alias_method :<<, :yield }
 			begin
@@ -249,6 +250,7 @@ class Transformer
 			end
 			def yield(*args)
 				Fiber.yield(:yield, *args)
+				self
 			end
 			alias_method :<<, :yield
 		else
@@ -260,6 +262,7 @@ class Transformer
 			def yield(*args)
 				item = Fiber.yield(:yield, *args)
 				raise(*item.args) if item.instance_of? @@exception_wrapper
+				self
 			end
 			alias_method :<<, :yield
 		end
@@ -305,6 +308,7 @@ class Transformer
 
 		def yield(*args)
 			@y.yield(*args)
+			self
 		end
 		alias_method :<<, :yield
 	end

@@ -16,9 +16,9 @@ COLTYPES = %w{to_s to_s     to_s to_datetime to_s   to_s    to_s  to_i   to_i }.
 def parse
 	loop do
 		if await =~ /(\S+) (\S+) (\S+) \[(.*?)\] "(\S+) (\S+) (\S+)" (\S+) (\S+)/
-			log_entry = $~.captures.zip(COLNAMES, COLTYPES)     >= \
-				proc{|val, name, type| [name, val.send(type)] }  >= \
-				Hash.new
+			log_entry = $~.captures.zip(COLNAMES, COLTYPES).
+				map{|val, name, type| [name, val.send(type)] }.
+				out_connect(Hash.new)
 			yield log_entry
 		end
 	end
@@ -60,9 +60,12 @@ def request_rate
 	end
 end
 
-open("/var/log/apache2/access.log") >= trans_for(:parse) >= Multicast.new(
-	trans_for(:find_404)          >= consum_for(:dump, "404        "),
-	trans_for(:bytes_transferred) >= consum_for(:dump, "Total bytes"),
-	trans_for(:request_rate)      >= consum_for(:dump, "Requests/s ")
+open("/var/log/apache2/access.log").
+	out_connect(trans_for :parse).
+	out_connect(Multicast.new(
+		trans_for(:find_404).         out_connect(consum_for(:dump, "404        ")),
+		trans_for(:bytes_transferred).out_connect(consum_for(:dump, "Total bytes")),
+		trans_for(:request_rate).     out_connect(consum_for(:dump, "Requests/s "))
+	)
 )
 

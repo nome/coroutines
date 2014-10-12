@@ -2,16 +2,6 @@ require 'coroutines'
 require 'test/unit'
 
 class TestCoroutines < Test::Unit::TestCase
-	def test_sink
-		assert_equal("abcdef", "abc" <= ("d".."f"))
-		assert_equal([1,2,3,4], [1] <= [2,3,4])
-	end
-
-	def test_source
-		assert_equal("abcdef", ("d".."f") >= "abc")
-		assert_equal([1,2,3,4], [2,3,4] >= [1])
-	end
-
 	def test_consumer
 		c = Consumer.new { |y| [ y.await, y.await ] }
 		c << :first << :second
@@ -36,8 +26,8 @@ class TestCoroutines < Test::Unit::TestCase
 				loop { result += y.await; y.yield result }
 			end
 		end
-		assert_equal([1, 3, 6], (1..3) >= rs >= [])
-		assert_equal([1, 3, 6], [] <= rs <= (1..3))
+		assert_equal([1, 3, 6], (1..3).out_connect(rs).out_connect([]))
+		assert_equal([1, 3, 6], [].in_connect(rs).in_connect(1..3))
 
 		def double
 			Transformer.new do |y|
@@ -47,17 +37,23 @@ class TestCoroutines < Test::Unit::TestCase
 				end
 			end
 		end
-		assert_equal([1,1,2,2], [] <= (double <= [1,2]))
-		assert_equal([1,1,2,2], [1,2] >= (double >= []))
-		assert_equal([1,2,4,6,9,12], (1..3) >= (double >= rs) >= [])
-		assert_equal([1,1,3,3,6,6], (1..3) >= (rs >= double) >= [])
+		assert_equal([1,1,2,2], [].in_connect(double.in_connect [1,2]))
+		assert_equal([1,1,2,2], [1,2].out_connect(double.out_connect []))
+		assert_equal([1,2,4,6,9,12], (1..3).out_connect(double.out_connect rs).out_connect([]))
+		assert_equal([1,1,3,3,6,6], (1..3).out_connect(rs.out_connect double).out_connect([]))
 	end
 
 	def test_transformer_chaining
 		t1 = Transformer.new{|y| y.yield (y.await + "a")}
 		t2 = Transformer.new{|y| y.yield (y.await + "b")}
-		t = t1 >= t2
-		result = %w{x y z} >= t >= []
+		t = t1.out_connect(t2)
+		result = %w{x y z}.out_connect(t).out_connect([])
+		assert_equal(["xab"], result)
+
+		t1 = Transformer.new{|y| y.yield (y.await + "a")}
+		t2 = Transformer.new{|y| y.yield (y.await + "b")}
+		t = t2.in_connect(t1)
+		result = %w{x y z}.out_connect(t).out_connect([])
 		assert_equal(["xab"], result)
 	end
 
@@ -70,17 +66,17 @@ class TestCoroutines < Test::Unit::TestCase
 			Transformer.new{|y| loop { y.yield (y.await + ",") } }
 		end
 
-		assert_equal("1,2,3,", s >= t1 >= t2 >= "")
-		assert_equal("1,2,3,", s >= t1 >= (t2 >= ""))
-		assert_equal("1,2,3,", s >= (t1 >= t2 >= ""))
-		assert_equal("1,2,3,", s >= (t1 >= t2) >= "")
-		assert_equal("1,2,3,", s >= ((t1 >= t2) >= ""))
+		assert_equal("1,2,3,", s.out_connect(t1).out_connect(t2).out_connect(""))
+		assert_equal("1,2,3,", s.out_connect(t1).out_connect(t2.out_connect("")))
+		assert_equal("1,2,3,", s.out_connect(t1.out_connect(t2).out_connect("")))
+		assert_equal("1,2,3,", s.out_connect(t1.out_connect t2).out_connect(""))
+		assert_equal("1,2,3,", s.out_connect(t1.out_connect(t2).out_connect("")))
 
-		assert_equal("1,2,3,", "" <= t2 <= t1 <= s)
-		assert_equal("1,2,3,", "" <= t2 <= (t1 <= s))
-		assert_equal("1,2,3,", "" <= (t2 <= t1 <= s))
-		assert_equal("1,2,3,", "" <= (t2 <= t1) <= s)
-		assert_equal("1,2,3,", "" <= ((t2 <= t1) <= s))
+		assert_equal("1,2,3,", "".in_connect(t2).in_connect(t1).in_connect(s))
+		assert_equal("1,2,3,", "".in_connect(t2).in_connect((t1.in_connect s)))
+		assert_equal("1,2,3,", "".in_connect(t2.in_connect(t1).in_connect(s)))
+		assert_equal("1,2,3,", "".in_connect(t2.in_connect t1).in_connect(s))
+		assert_equal("1,2,3,", "".in_connect(t2.in_connect(t1).in_connect(s)))
 	end
 
 	def running_sum(start)
@@ -88,77 +84,23 @@ class TestCoroutines < Test::Unit::TestCase
 		loop { result += await; yield result }
 	end
 	def test_transformer_method
-		assert_equal([4, 6, 9], (1..3) >= trans_for(:running_sum, 3) >= [])
-		assert_equal([4, 6, 9], (1..3) >= (trans_for(:running_sum, 3) >= []))
+		assert_equal([4, 6, 9], (1..3).out_connect(trans_for(:running_sum, 3)).out_connect([]))
+		assert_equal([4, 6, 9], (1..3).out_connect(trans_for(:running_sum, 3).out_connect([])))
+	end
+
+	def limit_three
+		Transformer.new do |y|
+			3.times { y.yield y.await }
+		end
 	end
 
 	def test_stop_iteration
 		consume_three = Consumer.new do |y|
 			[y.await, y.await, y.await]
 		end
-		assert_equal([1,2,3], (1..Float::INFINITY) >= consume_three)
+		assert_equal([1,2,3], (1..Float::INFINITY).out_connect(consume_three))
 
-		limit_three = Transformer.new do |y|
-			3.times { y.yield y.await }
-		end
-		assert_equal([1,2,3], (1..Float::INFINITY) >= limit_three >= [])
+		assert_equal([1,2,3], (1..Float::INFINITY).out_connect(limit_three).out_connect([]))
 	end
 
-	def test_transformer_procs
-		s = (1..3)
-		t1_proc = proc{|x| x.to_s }
-		t2_proc = proc{|x| x + "," }
-		def t1
-			Transformer.new{|y| loop { y.yield y.await.to_s } }
-		end
-		def t2
-			Transformer.new{|y| loop { y.yield (y.await + ",") } }
-		end
-
-		assert_equal("1,2,3,", s >= t1_proc >= t2_proc >= "")
-		assert_equal("1,2,3,", s >= t1_proc >= (t2_proc >= ""))
-		assert_equal("1,2,3,", s >= (t1_proc >= t2_proc >= ""))
-		assert_equal("1,2,3,", s >= (t1_proc >= t2_proc) >= "")
-		assert_equal("1,2,3,", s >= ((t1_proc >= t2_proc) >= ""))
-
-		assert_equal("1,2,3,", "" <= t2_proc <= t1_proc <= s)
-		assert_equal("1,2,3,", "" <= t2_proc <= (t1_proc <= s))
-		assert_equal("1,2,3,", "" <= (t2_proc <= t1_proc <= s))
-		assert_equal("1,2,3,", "" <= (t2_proc <= t1_proc) <= s)
-		assert_equal("1,2,3,", "" <= ((t2_proc <= t1_proc) <= s))
-
-		assert_equal("1,2,3,", s >= t1_proc >= t2 >= "")
-		assert_equal("1,2,3,", s >= t1_proc >= (t2 >= ""))
-		assert_equal("1,2,3,", s >= (t1_proc >= t2 >= ""))
-		assert_equal("1,2,3,", s >= (t1_proc >= t2) >= "")
-		assert_equal("1,2,3,", s >= ((t1_proc >= t2) >= ""))
-
-		assert_equal("1,2,3,", "" <= t2 <= t1_proc <= s)
-		assert_equal("1,2,3,", "" <= t2 <= (t1_proc <= s))
-		assert_equal("1,2,3,", "" <= (t2 <= t1_proc <= s))
-		assert_equal("1,2,3,", "" <= (t2 <= t1_proc) <= s)
-		assert_equal("1,2,3,", "" <= ((t2 <= t1_proc) <= s))
-
-		assert_equal("1,2,3,", s >= t1 >= t2_proc >= "")
-		assert_equal("1,2,3,", s >= t1 >= (t2_proc >= ""))
-		assert_equal("1,2,3,", s >= (t1 >= t2_proc >= ""))
-		assert_equal("1,2,3,", s >= (t1 >= t2_proc) >= "")
-		assert_equal("1,2,3,", s >= ((t1 >= t2_proc) >= ""))
-
-		assert_equal("1,2,3,", "" <= t2_proc <= t1 <= s)
-		assert_equal("1,2,3,", "" <= t2_proc <= (t1 <= s))
-		assert_equal("1,2,3,", "" <= (t2_proc <= t1 <= s))
-		assert_equal("1,2,3,", "" <= (t2_proc <= t1) <= s)
-		assert_equal("1,2,3,", "" <= ((t2_proc <= t1) <= s))
-	end
-
-	def test_transformer_proc_filter
-		assert_equal("2468", (1..9) >= proc{|x| x.to_s if x.even? } >= "")
-		assert_equal("2468", (1..9) >= proc{|x| x if x.even? } >= proc{|x| x.to_s} >= "")
-		assert_equal("56789", (5..15) >= proc{|x| x.to_s } >= proc{|s| s if s.length == 1 } >= "")
-	end
-
-	def test_multiple_args
-		assert_equal([[1,2],[3,4]], [[1,2],[3,4]] >= proc{|a,b| [a,b]} >= [])
-	end
 end

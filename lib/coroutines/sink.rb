@@ -11,8 +11,8 @@ module Sink
 	end
 
 	# :call-seq:
-	#   sink <= enum  -> obj
-	#   sink <= trans -> new_consum
+	#   sink.in_connect(enum)  -> obj
+	#   sink.in_connect(trans) -> new_consum
 	#
 	# In the first form, iterate over +enum+ and write each result to +sink+
 	# using <<; then return the result of sink.close.
@@ -20,7 +20,7 @@ module Sink
 	# In the second form, create a new Consumer by connecting the output of
 	# +trans+ (which must be convertible to a Transformer using the
 	# to_trans method) to +sink+.
-	def <=(other)
+	def in_connect(other)
 		if other.respond_to? :each
 			begin
 				other.each { |x| self << x }
@@ -28,7 +28,7 @@ module Sink
 			end
 			close
 		elsif other.respond_to? :to_trans
-			other >= self
+			other.to_trans.out_connect(self)
 		end
 	end
 

@@ -1,21 +1,22 @@
 require 'coroutines/base'
+require 'coroutines/operators' # deprecated
 
 #--
-# Most of the Sink methods mirror Enumerable, except for <=
-# for symmetry, also add a >= method to Enumerable
+# Most of the Sink methods mirror Enumerable, except for #in_connect
+# for symmetry, also add an #out_connect method to Enumerable
 #++
 module Enumerable
 	# :call-seq:
-	#   enum >= sink  -> obj
-	#   enum >= trans -> new_enum
+	#   enum.out_connect(sink)  -> obj
+	#   enum.out_connect(trans) -> new_enum
 	#
 	# In the first form, iterate over +enum+ and write each result to +sink+
 	# using <<; then return the result of sink.close.
 	#
-	# In the second form, create a new Enumerator by connecting +enum+ to the
-	# input of +trans+ (which must be convertible to a Transformer using the
-	# to_trans method).
-	def >=(other)
+	# In the second form, create a new Enumerator by connecting the output of
+	# +enum+ to the input of +trans+ (which must be convertible to a
+	# Transformer using the to_trans method).
+	def out_connect(other)
 		if other.respond_to? :<<
 			begin
 				each { |x| other << x }
@@ -23,7 +24,36 @@ module Enumerable
 			end
 			other.close
 		elsif other.respond_to? :to_trans
-			other <= self
+			other.to_trans.in_connect(self)
+		end
+	end
+
+	# :call-seq:
+	#   enum.filter_map {|obj| block }  -> array
+	#
+	# For each +obj+ in in +enum+, calls +block+, and collects its non-nil
+	# return values into a new +array+.
+	#--
+	# taken from the API doc of Enumerator::Lazy.new
+	def filter_map(&block)
+		map(&block).compact
+	end
+end
+
+if defined? Enumerator::Lazy
+	class Enumerator::Lazy
+		# :call-seq:
+		#   enum.filter_map {|obj| block }  -> an_enumerator
+		#
+		# Returns a new lazy Enumerator which iterates over all non-nil values
+		# returned by +block+ while +obj+ iterates over +enum+.
+		#--
+		# taken from the API doc of Enumerator::Lazy.new
+		def filter_map
+			Lazy.new(self) do |yielder, *values|
+				result = yield *values
+				yielder << result if result
+			end
 		end
 	end
 end
@@ -145,10 +175,10 @@ class Object
 	# analogous to using Kernel#enum_for to create an Enumerator instance, or
 	# using Object#consum_for to create a Consumer instance. The method is not
 	# executed immediately. The resulting Transformer can be connected to an
-	# enumerable (using transformer <= enum) or to a sink (using
-	# transformer >= sink). The point at which the transformer method gets
-	# started depends on how it is connected; in any case however, the method
-	# will be called with the +args+ given to trans_for. See Transformer
+	# enumerable (using transformer.in_connect(enum)) or to a sink (using
+	# transformer.out_connect(sink)). The point at which the transformer method
+	# gets started depends on how it is connected; in any case however, the
+	# method will be called with the +args+ given to trans_for. See Transformer
 	# for details.
 	#
 	# Within the transformer method, #await can be used to read the next
@@ -164,7 +194,7 @@ class Object
 	#   end
 	#
 	#   tr = trans_for :running_sum, 3  #=> #<Transformer: main:running_sum>
-	#   sums = (1..10) >= tr  #=> #<Enumerator: #<Transformer: main:running_sum> <= 1..10>
+	#   sums = (1..10).out_connect(tr)  #=> #<Enumerator: #<Transformer: main:running_sum> <= 1..10>
 	#   sums.to_a  #=> [4, 6, 9, 13, 18, 24, 31, 39, 48, 58]
 	#
 	def trans_for(meth, *args)
@@ -180,155 +210,3 @@ class Object
 	end
 end
 
-class Symbol
-	# :call-seq:
-	#   sym.to_trans -> transformer
-	#
-	# Allows implicit conversion of Symbol to Transformer. The transformer
-	# accepts any objects as input, calls the method given by +sym+ on each and
-	# outputs all non-nil results of the method. See Proc#to_trans for details.
-	#
-	# example:
-	#
-	#   collector = [] <= :to_s
-	#   collector << 1 << 4 << 9
-	#   collector.close # => ["1", "4", "9"]
-	#
-	def to_trans
-		Transformer.new do |y|
-			loop do
-				value = y.await.send self
-				y.yield value unless value.nil?
-			end
-		end
-	end
-
-	# :call-seq:
-	#   sym <= trans  -> new_trans
-	#   sym <= enum   -> new_enum
-	#
-	# Equivalent to sym.to_trans <= trans/enum, except that it uses a more
-	# efficient implementation.
-	def <=(source)
-		to_proc <= source
-	end
-
-	# :call-seq:
-	#   sym >= trans  -> new_trans
-	#   sym >= sink   -> new_consumer
-	#
-	# Equivalent to sym.to_trans >= trans/sink, except that it uses a more
-	# efficient implementation.
-	def >=(sink)
-		to_proc >= sink
-	end
-end
-
-# Define a poor man's Enumerator::Lazy for Ruby < 2.0
-if defined? Enumerator::Lazy
-	LazyEnumerator = Enumerator::Lazy
-else
-	class LazyEnumerator
-		def initialize(obj, &block)
-			@obj = obj; @block = block
-		end
-
-		class Yielder
-			def initialize(iter_block)
-				@iter_block = iter_block
-			end
-			def yield(*values)
-				@iter_block.call(*values)
-			end
-			alias_method :<<, :yield
-		end
-
-		def each(&iter_block)
-			yielder = Yielder.new(iter_block)
-			@obj.each do |*args|
-				@block.call(yielder, *args)
-			end
-		end
-		include Enumerable
-	end
-end
-
-class Proc
-	# :call-seq:
-	#   proc.to_trans -> transformer
-	#
-	# Allows implicit conversion of Proc to Transformer. The transformer is a
-	# combination of map and filter over its input values: For each input
-	# value, +proc+ is called with the input value as parameter. Every non-nil
-	# value returned by +proc+ is yielded as an output value.
-	#
-	# This is similar to Enumerable#map followed by Array#compact, but without
-	# constructing the intermediate Array (so it's even more similar to
-	# something like enum.lazy.map(&proc).reject(&:nil?), using the lazy
-	# enumerator introduced in Ruby 2.0).
-	#
-	# Example:
-	#
-	#   (1..10) >= proc{|x| x.to_s + ", " if x.even? } >= ""
-	#   # => "2, 4, 6, 8, 10, "
-	#
-	def to_trans
-		Transformer.new do |y|
-			loop do
-				value = self.call(y.await)
-				y.yield value unless value.nil?
-			end
-		end
-	end
-
-	# :call-seq:
-	#   proc <= trans  -> new_trans
-	#   proc <= enum   -> new_enum
-	#
-	# Equivalent to proc.to_trans <= trans/enum, except that it uses a more
-	# efficient implementation.
-	def <=(source)
-		if source.respond_to? :each
-			LazyEnumerator.new(source) do |y, *args|
-				value = call(*args)
-				y << value unless value.nil?
-			end
-		elsif source.respond_to? :to_proc
-			sp = source.to_proc
-			proc do |*args|
-				value = sp.call(*args)
-				if value.nil? then nil else self.call value end
-			end
-		elsif source.respond_to? :to_trans
-			# FIXME: this could be implemented more efficiently; proc doesn't
-			#        need to run in a separate Fiber
-			self.to_trans <= source.to_trans
-		else
-			raise ArgumentError, "#{source.inspect} is neither an enumerable nor a transformer"
-		end
-	end
-
-	# :call-seq:
-	#   proc >= trans  -> new_trans
-	#   proc >= sink   -> new_consumer
-	#
-	# Equivalent to proc.to_trans >= trans/sink, except that it uses a more
-	# efficient implementation.
-	def >=(sink)
-		if sink.respond_to? :input_map
-			sink.input_reject(&:nil?).input_map(&self)
-		elsif sink.respond_to? :to_proc
-			sp = sink.to_proc
-			proc do |*args|
-				value = self.call(*args)
-				if value.nil? then nil else sp.call value end
-			end
-		elsif sink.respond_to? :to_trans
-			# FIXME: this could be implemented more efficiently; proc doesn't
-			#        need to run in a separate Fiber
-			self.to_trans >= sink.to_trans
-		else
-			raise ArgumentError, "#{sink.inspect} is neither a sink nor a transformer"
-		end
-	end
-end

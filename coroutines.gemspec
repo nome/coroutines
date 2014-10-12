@@ -19,10 +19,11 @@ SPEC = Gem::Specification.new do |s|
 	s.files    = [
 		"lib/coroutines.rb",
 		"lib/coroutines/sink.rb",
-		"lib/coroutines/base.rb"
+		"lib/coroutines/base.rb",
+		"lib/coroutines/operators.rb",
 	]
 	s.require_path = "lib"
-	s.test_file = "tests/test_coroutines.rb"
+	s.test_file = "tests/suite.rb"
 	s.has_rdoc = false
 	s.extra_rdoc_files = ["README.rdoc"]
 end

@@ -1,4 +1,5 @@
 require 'coroutines'
+require 'coroutines/operators'
 require 'benchmark'
 
 $sink = open("/dev/null", "w")
@@ -52,14 +53,14 @@ Benchmark.bm(10) do |test|
 	test.report("consumer") do
 		record_dumper = $sink.dup.input_map{ |rec| "#{rec["Package"]} #{rec["Version"]}\n" }
 		paragraph_handler = record_dumper.input_map do |l|
-			{}.input_map{ |field| field.split(":", 2) } <= l
+			{}.input_map{ |field| field.split(":", 2) }.in_connect(l)
 		end.input_map{ |p| p.split(/\n(?! )/) }
-		open("/var/lib/dpkg/status").each("\n\n") >= paragraph_handler
+		open("/var/lib/dpkg/status").each("\n\n").out_connect paragraph_handler
 	end
 
 	test.report("transformer") do
 		open("/var/lib/dpkg/status").each("\n\n").map do |p|
-			p.each_line >= trans_for(:parse_dpkg_status) >= {}
+			p.each_line.out_connect(trans_for :parse_dpkg_status).out_connect({})
 		end.each do |rec|
 			$sink.write "#{rec["Package"]} #{rec["Version"]}\n"
 		end

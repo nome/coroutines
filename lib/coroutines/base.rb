@@ -7,7 +7,7 @@ require 'coroutines/sink'
 # * Object#consum_for
 # * Object#consumer
 # * Consumer.new
-# * Transformer#>=
+# * Transformer#out_connect
 #
 # See Object#consum_for for an explanation of the basic concepts.
 class Consumer
@@ -111,13 +111,13 @@ end
 # Transformers are pieces of code that accept input values and produce output
 # values (without returning from their execution context like in a regular
 # method call). They are used by connecting either their input to an enumerable
-# or their output to a sink (or both, using Sink#<= or Enumerable#>=). An
-# enumerable is any object implementing an iterator method each; a sink is
-# any object implementing the << operator (which is assumed to store or
-# output the supplied values in some form).
+# or their output to a sink (or both, using Sink#in_connect or
+# Enumerable#out_connect). An enumerable is any object implementing an iterator
+# method each; a sink is any object implementing the << operator (which is
+# assumed to store or output the supplied values in some form).
 #
 # The input of a transformer is connected to an enumerable +enum+ using
-# trans <= enum, the result of which is a new Enumerator instance. The
+# trans.in_connect(enum), the result of which is a new Enumerator instance. The
 # transformer is started upon iterating over this Enumerator. Whenever the
 # transformer requests a new input value (see Object#trans_for and
 # Transformer#new for how to do this), iteration over +enum+ is resumed. The
@@ -128,19 +128,20 @@ end
 # terminate without requesting any more values (though it may execute e.g. some
 # cleanup actions).
 #
-# The output of a transformer is connected to a sink using trans >= sink, the
-# result of which is a new Consumer instance. The transformer starts
-# executing right away; when it requests its first input value, the >=
-# operation returns. Input values supplied using << to the enclosing
-# Consumer are forwarded to the transformer by resuming execution at the
-# point where it last requested an input value. Output values produced by the
+# The output of a transformer is connected to a sink using
+# trans.out_connect(sink), the result of which is a new Consumer instance. The
+# transformer starts executing right away; when it requests its first input
+# value, out_connect returns. Input values supplied using << to the enclosing
+# Consumer are forwarded to the transformer by resuming execution at the point
+# where it last requested an input value. Output values produced by the
 # transformer are fed to sink#<<. After terminating, the result of the new
 # Consumer is the value returned by sink.close (see Consumer#result and
 # Consumer#close).
 #
 # Transformers can also be chained together by connecting the output of one the
-# input the next using trans >= other_trans or trans <= other_trans. See
-# Transformer#>= and Transformer#<= for details.
+# input the next using trans.out_connect(other_trans) or
+# trans.in_connect(other_trans). See Transformer#out_connect and
+# Transformer#in_connect for details.
 #
 class Transformer
 	# :call-seq:
@@ -158,7 +159,7 @@ class Transformer
 	#     loop { result += y.await; y.yield result }
 	#   end
 	# 
-	#   (1..3) >= running_sum >= []  # => [1, 3, 6]
+	#   (1..3).out_connect(running_sum).out_connect([])  # => [1, 3, 6]
 	#
 	def initialize(&block)
 		@self = block
@@ -177,15 +178,15 @@ class Transformer
 	end
 
 	# :call-seq:
-	#   trans <= other_trans  -> new_trans
-	#   trans <= enum         -> new_enum
+	#   trans.in_connect(other_trans)  -> new_trans
+	#   trans.in_connect(enum)         -> new_enum
 	#
 	# In the first form, creates a new Transformer that has the input of
 	# +trans+ connected to the output of +other_trans+.
 	#
-	# In the second form, creates a new Enumerator by connecting +enum+ to
-	# the input of +trans+. See Transformer for details.
-	def <=(source)
+	# In the second form, creates a new Enumerator by connecting the output of
+	# +enum+ to the input of +trans+. See Transformer for details.
+	def in_connect(source)
 		if not source.respond_to? :each
 			return source.to_trans.transformer_chain self
 		end
@@ -207,15 +208,15 @@ class Transformer
 	end
 
 	# :call-seq:
-	#   trans >= other_trans  -> new_trans
-	#   trans >= sink         -> consum
+	#   trans.out_connect(other_trans)  -> new_trans
+	#   trans.out_connect(sink)         -> consum
 	#
 	# In the first form, creates a new Transformer that has the output of
 	# +trans+ connected to the input of +other_trans+.
 	#
 	# In the second form, creates a new Consumer by connecting the output of
-	# +trans+ to +sink+. See Transformer for details.
-	def >=(sink)
+	# +trans+ to the input of +sink+. See Transformer for details.
+	def out_connect(sink)
 		if not sink.respond_to? :<<
 			return transformer_chain sink.to_trans
 		end
@@ -239,6 +240,53 @@ class Transformer
 		end
 
 		consum
+	end
+
+	class Lazy
+		def initialize(trans)
+			@trans = trans.instance_variable_get :@self
+		end
+
+		def lazy
+			self
+		end
+
+		class Yielder
+			def initialize(wrapped)
+				@wrapped = wrapped
+			end
+			def await
+				@wrapped.await
+			end
+
+			def define_yield(&block)
+				singleton_class.instance_eval do
+					define_method(:yield, &block)
+					alias_method :<<, :yield
+				end
+			end
+		end
+
+		def map(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					y.yield(block.call(*values))
+					yy
+				end
+				@trans.call yy
+			end
+		end
+		alias_method :collect, :map
+
+		def out_connect(other)
+			Transformer.new(&@trans).out_connect(other)
+		end
+
+	end
+
+	def lazy
+		Lazy.new self
 	end
 
 	protected

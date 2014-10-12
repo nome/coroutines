@@ -26,5 +26,5 @@ end
 
 data = "\x70\x24\x61\x99\xAF\xD1xyzz\x62\x56\x62\x61\xAB\xAB\x14\x62\x07"
 
-data.each_byte >= trans_for(:unwrap) >= method(:puts)
+data.each_byte.out_connect(trans_for :unwrap).out_connect(method(:puts))
 

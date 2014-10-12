@@ -103,4 +103,31 @@ class TestCoroutines < Test::Unit::TestCase
 		assert_equal([1,2,3], (1..Float::INFINITY).out_connect(limit_three).out_connect([]))
 	end
 
+	def test_transformer_lazy
+		def t_s
+			Transformer.new {|y| loop { y << y.await.to_s } }.lazy
+		end
+		assert_equal(3, limit_three.lazy.count.in_connect(1..Float::INFINITY))
+		assert_equal("456", t_s.drop(3).in_connect(1..6).out_connect(""))
+		assert_equal("1011", t_s.drop_while{|s| s.size < 2}.in_connect(1..11).out_connect(""))
+
+		result = ""
+		t_s.each{|x| result += x}.in_connect(2..6)
+		assert_equal("23456", result)
+
+		assert_equal("2:3:4:", t_s.filter_map{|s| s+":" if s.size < 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
+		assert_equal("2:3:4:", t_s.flat_map{|s| [s,":"] }.in_connect([2,3,4]).out_connect(""))
+		assert_equal("2:3:4:", t_s.map{|s| s+":" }.in_connect([2,3,4]).out_connect(""))
+		assert_equal("234", t_s.out_connect("").in_connect([2,3,4]))
+		assert_equal("234", t_s.reduce(:+).in_connect(2..4))
+		assert_equal("abc234", t_s.reduce("abc", :+).in_connect(2..4))
+		assert_equal("234", t_s.reject{|s| s.size >= 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
+		assert_equal("234", t_s.select{|s| s.size < 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
+		assert_equal("12345", t_s.take(5).in_connect(1..Float::INFINITY).out_connect(""))
+		assert_equal("123456789", t_s.take_while{|s| s.size < 2}.in_connect(1..Float::INFINITY).out_connect(""))
+		assert_equal(["1","2","3","4","5"], t_s.sort.in_connect([5,2,4,3,1]))
+		assert_equal(["c1", "a2", "b3"], t_s.sort_by{|s| s[1] }.in_connect(["a2", "b3", "c1"]))
+		assert_equal(["1","2","3"], t_s.to_a.in_connect(1..3))
+		assert_equal({a: 1, b: 2}, Transformer.new{|y| y << [:a,1] << [:b,2]}.lazy.to_h.in_connect([]))
+	end
 end

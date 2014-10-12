@@ -267,6 +267,94 @@ class Transformer
 			end
 		end
 
+		def count
+			Consumer.new do |y|
+				yy = Yielder.new y
+				n = 0
+				yy.define_yield do |*values|
+					n += 1
+					yy
+				end
+				@trans.call yy
+				n
+			end
+		end
+
+		def drop(n)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				to_drop = n
+				yy.define_yield do |*values|
+					if to_drop > 0
+						to_drop -= 1
+					else
+						y.yield(*values)
+					end
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def drop_while(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				dropping = true
+				yy.define_yield do |*values|
+					if dropping
+						if not block.call(*values)
+							dropping = false
+							y.yield(*values)
+						end
+					else
+						y.yield(*values)
+					end
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def each(&block)
+			Consumer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					block.call(*values)
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def filter_map(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					x = block.call(*values)
+					y.yield(x) unless x.nil?
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def flat_map(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					x = block.call(*values)
+					if x.respond_to? :to_ary
+						x.to_ary.each{|xx| y.yield xx }
+					else
+						y.yield x
+					end
+					yy
+				end
+				@trans.call yy
+			end
+		end
+		alias_method :collect_concat, :flat_map
+
 		def map(&block)
 			Transformer.new do |y|
 				yy = Yielder.new y
@@ -283,8 +371,166 @@ class Transformer
 			Transformer.new(&@trans).out_connect(other)
 		end
 
+		def reduce(*args)
+			if not block_given?
+				if args.size == 1
+					return reduce(&args[0].to_proc)
+				elsif args.size == 2
+					return reduce(args[0], &args[1].to_proc)
+				else
+					raise ArgumentError, "wrong number of arguments"
+				end
+			end
+			raise ArgumentError, "wrong number of arguments" if args.size > 1
+			block = proc
+
+			memo = if args.empty? then nil else args[0] end
+			Consumer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |value|
+					if memo.nil?
+						memo = value
+					else
+						memo = block.call memo, value
+					end
+					yy
+				end
+				@trans.call yy
+				memo
+			end
+		end
+		alias_method :inject, :reduce
+
+		def reject(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					y.yield(*values) unless block.call(*values)
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def select(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					y.yield(*values) if block.call(*values)
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def take(n)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				to_take = n
+				yy.define_yield do |*values|
+					if to_take > 0
+						y.yield(*values)
+						to_take -= 1
+					else
+						raise StopIteration
+					end
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def take_while(&block)
+			Transformer.new do |y|
+				yy = Yielder.new y
+				yy.define_yield do |*values|
+					if block.call(*values)
+						y.yield(*values)
+					else
+						raise StopIteration
+					end
+					yy
+				end
+				@trans.call yy
+			end
+		end
+
+		def sort
+			Consumer.new do |y|
+				yy = Yielder.new y
+				result = []
+				yy.define_yield do |value|
+					result << value
+					yy
+				end
+				@trans.call yy
+				result.sort
+			end
+		end
+
+		def sort_by(&block)
+			Consumer.new do |y|
+				yy = Yielder.new y
+				result = []
+				yy.define_yield do |value|
+					result << value
+					yy
+				end
+				@trans.call yy
+				result.sort_by(&block)
+			end
+		end
+
+		def to_a
+			Consumer.new do |y|
+				yy = Yielder.new y
+				result = []
+				yy.define_yield do |value|
+					result << value
+					yy
+				end
+				@trans.call yy
+				result
+			end
+		end
+
+		def to_h
+			Consumer.new do |y|
+				yy = Yielder.new y
+				result = {}
+				yy.define_yield do |value|
+					result[value[0]] = value[1]
+					yy
+				end
+				@trans.call yy
+				result
+			end
+		end
 	end
 
+	# :call-seq:
+	#    trans.lazy -> lazy_trans
+	#
+	# Returns a "lazy enumeration like" transformer. More precisely, the object
+	# returned can in many situations be used as if it were an Enumerator
+	# returned by trans.in_connect, since it implements work-alikes of many
+	# Enumerable methods. Note however that the return types of those methods
+	# differ: where an Enumerator method would return a new Enumerator, the
+	# corresponding lazy transformer returns a new Transformer; where an
+	# Enumerator would return a single value, the lazy transformer returns a
+	# Consumer.
+	#
+	# Example:
+	#
+	#   running_sum = Transformer.new do |y|
+	#     result = 0
+	#     loop { result += y.await; y.yield result }
+	#   end
+	#
+	#   sum_str = running_sum.lazy.map{|x| x.to_s}
+	#   # => a Transformer
+	#   (1..10).out_connect(sum_str).to_a
+	#   # => ["1", "3", "6", "10", "15", "21", "28", "36", "45", "55"]
 	def lazy
 		Lazy.new self
 	end

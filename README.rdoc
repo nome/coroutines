@@ -140,6 +140,9 @@ Any part of a pipeline can be passed around and stored as an individual object:
      lazy.map{|x| x.to_s + "\n"}
    # => a Transformer
 
+Note however that, while the last example works for map and some other common
+Enumerable methods, not all of the Enumerable API is implemented yet.
+
 == Connect operators
 As explained above, the overloaded <= and >= operators are currently provided
 by default; but using them without explicitly requiring 'coroutines/operators'

@@ -148,3 +148,10 @@ Object::            define Object#await, Object#consum_for and Object#trans_for
 Proc::              define Proc#to_trans, Proc#<= and Proc#>=
 Symbol::            define Symbol#to_trans, Symbol#<= and Symbol#>=
 
+== Contributing
+1. Fork it {on Github}[https://github.com/nome/coroutines]
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+

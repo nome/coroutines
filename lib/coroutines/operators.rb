@@ -1,34 +1,5 @@
 require 'coroutines/base'
 
-# Define a poor man's Enumerator::Lazy for Ruby < 2.0
-if defined? Enumerator::Lazy
-       LazyEnumerator = Enumerator::Lazy
-else
-       class LazyEnumerator
-               def initialize(obj, &block)
-                       @obj = obj; @block = block
-               end
-
-               class Yielder
-                       def initialize(iter_block)
-                               @iter_block = iter_block
-                       end
-                       def yield(*values)
-                               @iter_block.call(*values)
-                       end
-                       alias_method :<<, :yield
-               end
-
-               def each(&iter_block)
-                       yielder = Yielder.new(iter_block)
-                       @obj.each do |*args|
-                               @block.call(yielder, *args)
-                       end
-               end
-               include Enumerable
-       end
-end
-
 module Enumerable
 	# :call-seq:
 	#   enum >= sink  -> obj
@@ -162,10 +133,12 @@ class Proc
 	# efficient implementation.
 	def <=(source)
 		if source.respond_to? :each
-			LazyEnumerator.new(source) do |y, *args|
-				value = call(*args)
-				y << value unless value.nil?
-			end
+			Enumerator.new do |y|
+				source.each do |obj|
+					value = call obj
+					y << value unless value.nil?
+				end
+			end.lazy
 		elsif source.respond_to? :to_proc
 			sp = source.to_proc
 			proc do |*args|

@@ -1,5 +1,6 @@
 require 'fiber'
 require 'coroutines/sink'
+require 'lazy_enumerator' unless defined? Enumerator::Lazy
 
 # A class implementing consumer coroutines
 #
@@ -179,13 +180,13 @@ class Transformer
 
 	# :call-seq:
 	#   trans.in_connect(other_trans)  -> new_trans
-	#   trans.in_connect(enum)         -> new_enum
+	#   trans.in_connect(enum)         -> lazy_enumerator
 	#
 	# In the first form, creates a new Transformer that has the input of
 	# +trans+ connected to the output of +other_trans+.
 	#
-	# In the second form, creates a new Enumerator by connecting the output of
-	# +enum+ to the input of +trans+. See Transformer for details.
+	# In the second form, creates a new lazy Enumerator by connecting the
+	# output of +enum+ to the input of +trans+. See Transformer for details.
 	def in_connect(source)
 		if not source.respond_to? :each
 			return source.to_trans.transformer_chain self
@@ -197,9 +198,9 @@ class Transformer
 				source_enum.next
 			end
 			@self.call(y)
-		end
+		end.lazy
 
-		description = "#<Enumerator: #{inspect} <= #{source.inspect}>"
+		description = "#<Enumerator::Lazy: #{inspect} <= #{source.inspect}>"
 		enum.define_singleton_method :inspect do
 			description
 		end

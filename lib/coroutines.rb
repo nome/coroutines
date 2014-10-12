@@ -40,20 +40,18 @@ module Enumerable
 	end
 end
 
-if defined? Enumerator::Lazy
-	class Enumerator::Lazy
-		# :call-seq:
-		#   enum.filter_map {|obj| block }  -> an_enumerator
-		#
-		# Returns a new lazy Enumerator which iterates over all non-nil values
-		# returned by +block+ while +obj+ iterates over +enum+.
-		#--
-		# taken from the API doc of Enumerator::Lazy.new
-		def filter_map
-			Lazy.new(self) do |yielder, *values|
-				result = yield *values
-				yielder << result if result
-			end
+class Enumerator::Lazy
+	# :call-seq:
+	#   enum.filter_map {|obj| block }  -> an_enumerator
+	#
+	# Returns a new lazy Enumerator which iterates over all non-nil values
+	# returned by +block+ while +obj+ iterates over +enum+.
+	#--
+	# taken from the API doc of Enumerator::Lazy.new
+	def filter_map
+		Lazy.new(self) do |yielder, *values|
+			result = yield *values
+			yielder << result if result
 		end
 	end
 end

@@ -54,7 +54,7 @@ A simple transformer:
    end  
    
    tr = trans_for :running_sum, 3  # => #<Transformer: main:running_sum>
-   sums = tr.in_connect(1..10)  # => #<Enumerator: #<Transformer: main:running_sum> <= 1..10>
+   sums = tr.in_connect(1..10)  # => #<Enumerator::Lazy: #<Transformer: main:running_sum> <= 1..10>
    sums.to_a  # => [4, 6, 9, 13, 18, 24, 31, 39, 48, 58]
 
    tr = trans_for :running_sum, 0  # => #<Transformer: main:running_sum>
@@ -98,12 +98,7 @@ mirrors Sink#in_connect:
    ("d".."f").out_connect("abc")  # => "abcdef"
 
 == Pipelines involving transformers
-We'll be re-using the running_sum example from above. The following example
-uses lazy enumerators, which were added in Ruby 2.0. If you you want to try it
-out using a previous Ruby version, you can "gem install lazy_enumerator" (and
-require 'lazy_enumerator') to get a backported version by Charles Oliver
-Nutter. The original prototype implementation by Yutaka HARA is also available
-in the enumerable-lazy gem, but that one is no longer maintained.
+We'll be re-using the running_sum example from above.
 
    (1..10).
      out_connect(trans_for :running_sum, 0).
@@ -123,6 +118,11 @@ In the above example, the "lazyness" of the pipeline - that is, the fact that
 we don't have to keep the complete sequence of values in memory at any stage -
 requires Enumerable#lazy. If we replace the lazy.map with a simple map, the
 complete sequence of strings will be stored in an intermediate Array.
+
+[ In order to avoid confusing readers it should be noted that lazy enumerators
+were added in Ruby 2.0; the coroutines gem therefore depends on Charles Oliver
+Nutter's lazy_enumerator gem, which contains a backport of the feature to
+Ruby 1.8/1.9 ]
 
 Any part of a pipeline can be passed around and stored as an individual object:
 

@@ -26,4 +26,5 @@ SPEC = Gem::Specification.new do |s|
 	s.test_file = "tests/suite.rb"
 	s.has_rdoc = true
 	s.extra_rdoc_files = ["README.rdoc"]
+	s.add_runtime_dependency "lazy_enumerator"
 end

@@ -44,6 +44,27 @@ basic library API. Of course, a counter could just as easily be implemented
 using a closure; the advantage of a consumer is that the implementation could
 involve arbitrary control structures with multiple calls to await.
 
+Often, a consumer can be rewritten using an enumerator. In the above example,
+we could also write
+
+   def counter(start, values)
+     result = start
+     values.each { |x| result += x }
+     "Final value: #{result}"
+   end
+
+   values = [10, 1000, 100000] # could be an enumerator fetching values lazily
+   counter(10, values)
+
+Depending on the context, either solution may be more readable. But there's one
+thing you can do with consumers but not with enumerators: Lazily feeding the
+same values to more than one function. With enumerators, iteration is driven
+from the consuming side; with consumers, it is driven by the producing side.
+Distributing a stream to many consumers (or, more generally, sinks) can be done
+using Sink::Multicast.  See the {Apache log parsing
+example}[https://github.com/nome/coroutines/blob/master/examples/parse_apache.rb]
+for a practical application of multicasting.
+
 A simple transformer:
 
    require 'coroutines'
@@ -164,7 +185,7 @@ where a Proc object in a pipeline is interpreted as if it were an argument to En
    (1..9).lazy.filter_map{|x| x.to_s if x.even? }.out_connect("")
 
 Apart from saving a few keystrokes (d'oh...), this has a the advantage that all
-elements of a pipeline are lazy _by default_. When using map, filter and
+elements of a pipeline are lazy _by_default_. When using map, filter and
 friends, forgetting to drop a "lazy" in the right place causes this part of the
 pipeline to become strict (but of course it may still produce the intended
 results!). This type of bug can be hard to catch - unless you're always

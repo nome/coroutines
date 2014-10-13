@@ -6,7 +6,6 @@ require 'lazy_enumerator' unless defined? Enumerator::Lazy
 #
 # A Consumer can be created by the following methods:
 # * Object#consum_for
-# * Object#consumer
 # * Consumer.new
 # * Transformer#out_connect
 #

@@ -12,7 +12,11 @@ SPEC = Gem::Specification.new do |s|
 	s.licenses = ["Ruby", "BSD-2-Clause"]
 	s.summary  = "Library for producer/transformer/consumer coroutines"
 	s.description = readme_header.join
-	s.homepage = "https://github.com/nome/coroutines"
+	s.homepage = "http://nome.github.io/coroutines"
+	s.metadata = {
+		"issue_tracker" => "https://github.com/nome/coroutines/issues",
+		"source_code" => "https://github.com/nome/coroutines"
+	}
 	s.authors  = ["Knut Franke"]
 	s.email    = "knut.franke@gmx.de"
 	s.platform = Gem::Platform::RUBY

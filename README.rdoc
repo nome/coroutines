@@ -1,10 +1,14 @@
-= Coroutines
+= Coroutines for Ruby
 A library for creating and composing producer/transformer/consumer coroutines.
 Producers are already provided by Ruby's built-in Enumerator class; this
 library provides Transformer and Consumer classes that work analogously. In
 particular, they are also based on Fiber and not on threads (as in some other
 producer/consumer libraries). Also provides a module Sink, which is analogous
 to Enumerable, and Enumerable/Transformer/Sink composition.
+
+rdoc API docs:: http://nome.github.io/coroutines
+source code:: https://github.com/nome/coroutines
+bug tracker:: https://github.com/nome/coroutines/issues
 
 == Installing
    gem install coroutines
@@ -221,9 +225,9 @@ Proc::              define Proc#to_trans, Proc#<= and Proc#>=
 Symbol::            define Symbol#to_trans, Symbol#<= and Symbol#>=
 
 == Contributing
-1. Fork it {on Github}[https://github.com/nome/coroutines]
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
+1. {Fork it on Github}[https://github.com/nome/coroutines/fork]
+2. Create your feature branch (<code>git checkout -b my-new-feature</code>)
+3. Commit your changes (<code>git commit -am 'Add some feature'</code>)
+4. Push to the branch (<code>git push origin my-new-feature</code>)
 5. Create new Pull Request
 

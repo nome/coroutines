@@ -49,10 +49,12 @@ class Enumerator::Lazy
 	#--
 	# taken from the API doc of Enumerator::Lazy.new
 	def filter_map
-		Lazy.new(self) do |yielder, *values|
-			result = yield *values
-			yielder << result if result
-		end
+		Enumerator.new do |yielder|
+			each do |*values|
+				result = yield *values
+				yielder << result if result
+			end
+		end.lazy
 	end
 end
 

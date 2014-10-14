@@ -46,7 +46,7 @@ module Sink
 	#
 	# Returns a new sink which feeds those inputs for which +block+ returns a
 	# true value to +sink+ and discards all others.
-	def input_select
+	def input_select(&block)
 		InputSelectWrapper.new(self, &block)
 	end
 

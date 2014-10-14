@@ -6,6 +6,7 @@ class TestCoroutines < Test::Unit::TestCase
 		c = Consumer.new { |y| [ y.await, y.await ] }
 		c << :first << :second
 		assert_equal([:first, :second], c.close)
+		assert_equal([:first, :second], c.result)
 	end
 
 	def counter(start)

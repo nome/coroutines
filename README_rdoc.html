@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>README - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#label-Coroutines+for+Ruby">Coroutines for Ruby</a>
+    <li><a href="#label-Installing">Installing</a>
+    <li><a href="#label-Using">Using</a>
+    <li><a href="#label-Sources+and+sinks">Sources and sinks</a>
+    <li><a href="#label-Pipelines+involving+transformers">Pipelines involving transformers</a>
+    <li><a href="#label-Connect+operators">Connect operators</a>
+    <li><a href="#label-Links+and+Acknowledgements">Links and Acknowledgements</a>
+    <li><a href="#label-Compatibility">Compatibility</a>
+    <li><a href="#label-Contributing">Contributing</a>
+  </ul>
+</div>
+
+
+  <div id="project-metadata">
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./BSDL.html">BSDL</a>
+  
+    <li><a href="./COPYING.html">COPYING</a>
+  
+    <li><a href="./README_rdoc.html">README</a>
+  
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page README.rdoc">
+
+<h1 id="label-Coroutines+for+Ruby">Coroutines for Ruby<span><a href="#label-Coroutines+for+Ruby">&para;</a> <a href="#documentation">&uarr;</a></span></h1>
+
+<p>A library for creating and composing producer/transformer/consumer
+coroutines. Producers are already provided by Ruby&#39;s built-in <a
+href="Enumerator.html">Enumerator</a> class; this library provides <a
+href="Transformer.html">Transformer</a> and <a
+href="Consumer.html">Consumer</a> classes that work analogously. In
+particular, they are also based on Fiber and not on threads (as in some
+other producer/consumer libraries). Also provides a module <a
+href="Sink.html">Sink</a>, which is analogous to <a
+href="Enumerable.html">Enumerable</a>, and Enumerable/Transformer/Sink
+composition.</p>
+<dl class="rdoc-list note-list"><dt>rdoc API docs
+<dd>
+<p><a href="http://nome.github.io/coroutines">nome.github.io/coroutines</a></p>
+</dd><dt>source code
+<dd>
+<p><a href="https://github.com/nome/coroutines">github.com/nome/coroutines</a></p>
+</dd><dt>bug tracker
+<dd>
+<p><a
+href="https://github.com/nome/coroutines/issues">github.com/nome/coroutines/issues</a></p>
+</dd></dl>
+
+<h2 id="label-Installing">Installing<span><a href="#label-Installing">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<pre>gem install coroutines</pre>
+
+<h2 id="label-Using">Using<span><a href="#label-Using">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<hr>
+
+<p><strong>Major change in version 0.2.0:</strong> The preferred way of
+connecting enumerables, transformers and sinks is now to use <a
+href="Enumerable.html#method-i-out_connect">Enumerable#out_connect</a>, <a
+href="Sink.html#method-i-in_connect">Sink#in_connect</a>, <a
+href="Transformer.html#method-i-out_connect">Transformer#out_connect</a>,
+<a href="Transformer.html#method-i-in_connect">Transformer#in_connect</a>.
+I currently tend to the conclusion that descriptive names are more
+idiomatic Ruby (while the operator notation is rather a bit Haskellish).
+The &lt;= and &gt;= operators are still provided by default for
+backwards-compatibility, and for comparing the relative benefits of both
+notations. However, please consider their usage without explicitly
+requiring &#39;coroutines/operators&#39; as deprecated. Feedback welcome.</p>
+<hr>
+
+<p>A simple consumer:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;coroutines&#39;</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">counter</span>(<span class="ruby-identifier">start</span>)
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">start</span>
+  <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span> }
+  <span class="ruby-node">&quot;Final value: #{result}&quot;</span>
+<span class="ruby-keyword">end</span>  
+
+<span class="ruby-identifier">co</span> = <span class="ruby-identifier">consum_for</span> :<span class="ruby-identifier">counter</span>, <span class="ruby-value">10</span>  <span class="ruby-comment"># =&gt; #&lt;Consumer: main:counter (running)&gt;</span>
+<span class="ruby-identifier">co</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">10</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">1000</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">10000</span>
+<span class="ruby-identifier">co</span>.<span class="ruby-identifier">close</span>  <span class="ruby-comment"># =&gt; &quot;Final value: 11020&quot;</span>
+</pre>
+
+<p>The call to <a href="Consumer.html#method-i-close">Consumer#close</a>
+raises StopIteration at the point at which the consumer last executed
+await. In this case, the StopIteration is caught by loop, causing it to
+terminate.</p>
+
+<p>Note that this is an intentionally simplistic example intended to show the
+basic library API. Of course, a counter could just as easily be implemented
+using a closure; the advantage of a consumer is that the implementation
+could involve arbitrary control structures with multiple calls to await.</p>
+
+<p>Often, a consumer can be rewritten using an enumerator. In the above
+example, we could also write</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">counter</span>(<span class="ruby-identifier">start</span>, <span class="ruby-identifier">values</span>)
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">start</span>
+  <span class="ruby-identifier">values</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">x</span> }
+  <span class="ruby-node">&quot;Final value: #{result}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">values</span> = [<span class="ruby-value">10</span>, <span class="ruby-value">1000</span>, <span class="ruby-value">100000</span>] <span class="ruby-comment"># could be an enumerator fetching values lazily</span>
+<span class="ruby-identifier">counter</span>(<span class="ruby-value">10</span>, <span class="ruby-identifier">values</span>)
+</pre>
+
+<p>Depending on the context, either solution may be more readable. But
+there&#39;s one thing you can do with consumers but not with enumerators:
+Lazily feeding the same values to more than one function. With enumerators,
+iteration is driven from the consuming side; with consumers, it is driven
+by the producing side. Distributing a stream to many consumers (or, more
+generally, sinks) can be done using <a
+href="Sink/Multicast.html">Sink::Multicast</a>.  See the <a
+href="https://github.com/nome/coroutines/blob/master/examples/parse_apache.rb">Apache
+log parsing example</a> for a practical application of multicasting.</p>
+
+<p>A simple transformer:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;coroutines&#39;</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">running_sum</span>(<span class="ruby-identifier">start</span>)
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">start</span>
+  <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span>; <span class="ruby-keyword">yield</span> <span class="ruby-identifier">result</span> }
+<span class="ruby-keyword">end</span>  
+
+<span class="ruby-identifier">tr</span> = <span class="ruby-identifier">trans_for</span> :<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">3</span>  <span class="ruby-comment"># =&gt; #&lt;Transformer: main:running_sum&gt;</span>
+<span class="ruby-identifier">sums</span> = <span class="ruby-identifier">tr</span>.<span class="ruby-identifier">in_connect</span>(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>)  <span class="ruby-comment"># =&gt; #&lt;Enumerator::Lazy: #&lt;Transformer: main:running_sum&gt; &lt;= 1..10&gt;</span>
+<span class="ruby-identifier">sums</span>.<span class="ruby-identifier">to_a</span>  <span class="ruby-comment"># =&gt; [4, 6, 9, 13, 18, 24, 31, 39, 48, 58]</span>
+
+<span class="ruby-identifier">tr</span> = <span class="ruby-identifier">trans_for</span> :<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>  <span class="ruby-comment"># =&gt; #&lt;Transformer: main:running_sum&gt;</span>
+<span class="ruby-identifier">collect_sums</span> = <span class="ruby-identifier">tr</span>.<span class="ruby-identifier">out_connect</span>([])  <span class="ruby-comment"># =&gt; #&lt;Consumer: #&lt;Transformer: main:running_sum&gt; &gt;= []&gt;</span>
+<span class="ruby-identifier">collect_sums</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">1</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">1</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">2</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">3</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">5</span>
+<span class="ruby-identifier">collect_sums</span>.<span class="ruby-identifier">close</span>  <span class="ruby-comment"># =&gt; [1, 2, 4, 7, 12]</span>
+</pre>
+
+<p>Again, this is just a basic demonstration of the API that could be written
+without resorting to coroutines (though probably not quite as succinctly).</p>
+
+<h2 id="label-Sources+and+sinks">Sources and sinks<span><a href="#label-Sources+and+sinks">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>As you probably know, many Ruby classes use the <a
+href="Enumerable.html">Enumerable</a> mixin to provide common functionality
+like mapping and filtering of sequences of values. We can think of such
+classes as “sources” of the values yielded by their respective each
+methods. In the same way, several classes use the &lt;&lt; operator to
+<em>accept</em> sequences of values:</p>
+
+<pre class="ruby"><span class="ruby-identifier">$stdout</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;a&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;b&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;c&quot;</span>  <span class="ruby-comment"># prints &quot;abc&quot;</span>
+[] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;a&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;b&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;c&quot;</span>  <span class="ruby-comment"># =&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</span>
+<span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;a&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;b&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;c&quot;</span>  <span class="ruby-comment"># =&gt; &quot;abc&quot;</span>
+</pre>
+
+<p>The <code>coroutines</code> library provides the mixin <a
+href="Sink.html">Sink</a> for such classes. Among other methods, this
+provides <a href="Sink.html#method-i-in_connect">Sink#in_connect</a>, which
+“connects” an enumerable (as a “source” of values) to a sink&#39;s “input”.
+Upon connecting, the enumerable is iterated and each value is appended to
+the sink; then the sink is closed (by calling its close method). <a
+href="Sink.html#method-i-in_connect">Sink#in_connect</a> returns whatever
+close returns, which defaults to simply returning the sink itself (see <a
+href="Sink.html#method-i-close">Sink#close</a>).</p>
+
+<pre class="ruby"><span class="ruby-identifier">open</span>(<span class="ruby-string">&quot;test.txt&quot;</span>, <span class="ruby-string">&quot;w&quot;</span>).<span class="ruby-identifier">in_connect</span>([<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>])  <span class="ruby-comment"># write &quot;abc&quot; to test.txt</span>
+[<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>].<span class="ruby-identifier">in_connect</span>(<span class="ruby-string">&quot;d&quot;</span><span class="ruby-operator">..</span><span class="ruby-string">&quot;f&quot;</span>)  <span class="ruby-comment"># =&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;]</span>
+<span class="ruby-string">&quot;abc&quot;</span>.<span class="ruby-identifier">in_connect</span>(<span class="ruby-string">&quot;d&quot;</span><span class="ruby-operator">..</span><span class="ruby-string">&quot;f&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;abcdef&quot;</span>
+</pre>
+
+<p>Note that for IO/File objects, this implies that the file descriptor will
+be closed after in_connect finishes. If this is not what you want, use dup:</p>
+
+<pre>$stdout.dup.in_connect([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])  # print &quot;abc&quot;</pre>
+
+<p>For symmetry, the coroutines library also implements <a
+href="Enumerable.html#method-i-out_connect">Enumerable#out_connect</a>,
+which mirrors <a href="Sink.html#method-i-in_connect">Sink#in_connect</a>:</p>
+
+<pre class="ruby">(<span class="ruby-string">&quot;d&quot;</span><span class="ruby-operator">..</span><span class="ruby-string">&quot;f&quot;</span>).<span class="ruby-identifier">out_connect</span>(<span class="ruby-string">&quot;abc&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;abcdef&quot;</span>
+</pre>
+
+<h2 id="label-Pipelines+involving+transformers">Pipelines involving transformers<span><a href="#label-Pipelines+involving+transformers">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>We&#39;ll be re-using the running_sum example from above.</p>
+
+<pre class="ruby">(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>).
+  <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">trans_for</span> :<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>).
+  <span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span>}.
+  <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">dup</span>)
+</pre>
+
+<p>What does this do? It takes the sequences of integers from 1 to 10, then
+computes the running sum, then converts each partial sum to a string, and
+finally prints out each string to $stdout. Except that the “thens” in the
+previous sentence are not entirely correct, since the processing stages run
+in parallel (using coroutines where required, so blocking <a
+href="IO.html">IO</a> in one stage will block all other stages). Instead of
+(1..10), we could have a File and iterate over GBs of data, and at no point
+would we need to have the entire sequence in memory.</p>
+
+<p>In the above example, the “lazyness” of the pipeline - that is, the fact
+that we don&#39;t have to keep the complete sequence of values in memory at
+any stage - requires Enumerable#lazy. If we replace the lazy.map with a
+simple map, the complete sequence of strings will be stored in an
+intermediate <a href="Array.html">Array</a>.</p>
+
+<p>[ In order to avoid confusing readers it should be noted that lazy
+enumerators were added in Ruby 2.0; the coroutines gem therefore depends on
+Charles Oliver Nutter&#39;s lazy_enumerator gem, which contains a backport
+of the feature to Ruby 1.8/1.9 ]</p>
+
+<p>Any part of a pipeline can be passed around and stored as an individual
+object:</p>
+
+<pre class="ruby">(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>).
+  <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">trans_for</span> :<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>).
+  <span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span>}
+<span class="ruby-comment"># =&gt; an Enumerator</span>
+
+<span class="ruby-identifier">trans_for</span>(:<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>).
+  <span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span>}.
+  <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">dup</span>)
+<span class="ruby-comment"># =&gt; a Consumer</span>
+
+<span class="ruby-identifier">trans_for</span>(:<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>).
+  <span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span>}
+<span class="ruby-comment"># =&gt; a Transformer</span>
+</pre>
+
+<p>Note however that, while the last example works for map and some other
+common <a href="Enumerable.html">Enumerable</a> methods, not all of the <a
+href="Enumerable.html">Enumerable</a> API is implemented yet.</p>
+
+<h2 id="label-Connect+operators">Connect operators<span><a href="#label-Connect+operators">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>As explained above, the overloaded &lt;= and &gt;= operators are currently
+provided by default; but using them without explicitly requiring
+&#39;coroutines/operators&#39; is deprecated.</p>
+
+<p>&#39;coroutines/operators&#39; provides a short-hand notation for
+in_connect, out_connect and <a
+href="Enumerable.html#method-i-filter_map">Enumerable#filter_map</a> by
+overloading &gt;= and &lt;=:</p>
+
+<pre class="ruby"><span class="ruby-identifier">open</span>(<span class="ruby-string">&quot;test.txt&quot;</span>, <span class="ruby-string">&quot;w&quot;</span>) <span class="ruby-operator">&lt;=</span> [<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>]  <span class="ruby-comment"># write &quot;abc&quot; to test.txt</span>
+[<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>] <span class="ruby-operator">&lt;=</span> (<span class="ruby-string">&quot;d&quot;</span><span class="ruby-operator">..</span><span class="ruby-string">&quot;f&quot;</span>)  <span class="ruby-comment"># =&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;]</span>
+<span class="ruby-string">&quot;abc&quot;</span> <span class="ruby-operator">&lt;=</span> (<span class="ruby-string">&quot;d&quot;</span><span class="ruby-operator">..</span><span class="ruby-string">&quot;f&quot;</span>)  <span class="ruby-comment"># =&gt; &quot;abcdef&quot;</span>
+<span class="ruby-identifier">enum</span> = (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">trans_for</span>(:<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">proc</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span> }  <span class="ruby-comment"># =&gt; an Enumerator</span>
+<span class="ruby-identifier">cons</span> = <span class="ruby-identifier">trans_for</span>(:<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">proc</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span> } <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">dup</span>  <span class="ruby-comment"># =&gt; a Consumer</span>
+<span class="ruby-identifier">trans</span> = <span class="ruby-identifier">trans_for</span>(:<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">0</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">proc</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span> }  <span class="ruby-comment"># =&gt; a Transformer</span>
+</pre>
+
+<p>where a <a href="Proc.html">Proc</a> object in a pipeline is interpreted as
+if it were an argument to <a
+href="Enumerable.html#method-i-filter_map">Enumerable#filter_map</a>; i.e.
+the following to are equivalent:</p>
+
+<pre class="ruby">(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">9</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">proc</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">even?</span> } <span class="ruby-operator">&gt;=</span> <span class="ruby-string">&quot;&quot;</span>
+(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">9</span>).<span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">filter_map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">even?</span> }.<span class="ruby-identifier">out_connect</span>(<span class="ruby-string">&quot;&quot;</span>)
+</pre>
+
+<p>Apart from saving a few keystrokes (d&#39;oh…), this has a the advantage
+that all elements of a pipeline are lazy <em>by_default</em>. When using
+map, filter and friends, forgetting to drop a “lazy” in the right place
+causes this part of the pipeline to become strict (but of course it may
+still produce the intended results!). This type of bug can be hard to catch
+- unless you&#39;re always testing with production-sized data sets.</p>
+
+<h2 id="label-Links+and+Acknowledgements">Links and Acknowledgements<span><a href="#label-Links+and+Acknowledgements">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>Inspired by <a href="http://www.dabeaz.com/generators">David M. Beazley’s
+Generator Tricks</a> (Python) and <a
+href="https://www.fpcomplete.com/user/snoyberg/library-documentation/conduit-overview">Michael
+Snoyman’s conduit package</a> (Haskell).</p>
+
+<h2 id="label-Compatibility">Compatibility<span><a href="#label-Compatibility">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>Tested with MRI 1.9.3p484, 2.0.0p384 and 2.2.0dev (trunk 47827) on Linux.
+Should work on other moderately recent versions and other operating
+systems. Will probably not work on all alternative Ruby implementations,
+because it depends on the fiber library.</p>
+
+<p>Requiring &#39;coroutines&#39; does some monkey patching to various core
+classes, which may be a compatibility issue. It is possible to load just
+the core module ( <a href="Sink.html">Sink</a>) and classes ( <a
+href="Consumer.html">Consumer</a> and <a
+href="Transformer.html">Transformer</a>) using “require
+&#39;coroutines/base&#39;”. Obviously, you will then have to instantiate <a
+href="Consumer.html">Consumer</a> and <a
+href="Transformer.html">Transformer</a> manually in order to use them; and
+you&#39;ll have to be more explicit when constructing certain pipelines.</p>
+
+<p>Patched core modules and classes are:</p>
+<dl class="rdoc-list note-list"><dt><a href="Enumerable.html">Enumerable</a>
+<dd>
+<p>add <a
+href="Enumerable.html#method-i-filter_map">Enumerable#filter_map</a>, <a
+href="Enumerable.html#method-i-out_connect">Enumerable#out_connect</a> and
+Enumerable#&gt;= operator</p>
+</dd><dt><a href="Enumerator/Lazy.html">Enumerator::Lazy</a>
+<dd>
+<p>add <a
+href="Enumerator/Lazy.html#method-i-filter_map">Enumerator::Lazy#filter_map</a></p>
+</dd><dt><a href="IO.html">IO</a>, <a href="Array.html">Array</a>, <a href="String.html">String</a>
+<dd>
+<p>include <a href="Sink.html">Sink</a> mixin</p>
+</dd><dt><a href="Hash.html">Hash</a>
+<dd>
+<p>define <a href="Hash.html#method-i-3C-3C">Hash#<<</a> operator and include
+<a href="Sink.html">Sink</a> mixin</p>
+</dd><dt><a href="Method.html">Method</a>
+<dd>
+<p>define <a href="Method.html#method-i-3C-3C">Method#<<</a> operator, define
+Method#close as an alias for Method#receiver, and include <a
+href="Sink.html">Sink</a> mixin</p>
+</dd><dt><a href="Object.html">Object</a>
+<dd>
+<p>define <a href="Object.html#method-i-await">Object#await</a>, <a
+href="Object.html#method-i-consum_for">Object#consum_for</a> and <a
+href="Object.html#method-i-trans_for">Object#trans_for</a></p>
+</dd><dt><a href="Proc.html">Proc</a>
+<dd>
+<p>define <a href="Proc.html#method-i-to_trans">Proc#to_trans</a>, Proc#&lt;=
+and Proc#&gt;=</p>
+</dd><dt><a href="Symbol.html">Symbol</a>
+<dd>
+<p>define <a href="Symbol.html#method-i-to_trans">Symbol#to_trans</a>,
+Symbol#&lt;= and Symbol#&gt;=</p>
+</dd></dl>
+
+<h2 id="label-Contributing">Contributing<span><a href="#label-Contributing">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<ol><li>
+<p><a href="https://github.com/nome/coroutines/fork">Fork it on Github</a></p>
+</li><li>
+<p>Create your feature branch (<code>git checkout -b my-new-feature</code>)</p>
+</li><li>
+<p>Commit your changes (<code>git commit -am &#39;Add some
+feature&#39;</code>)</p>
+</li><li>
+<p>Push to the branch (<code>git push origin my-new-feature</code>)</p>
+</li><li>
+<p>Create new Pull Request</p>
+</li></ol>
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

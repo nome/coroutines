@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>Table of Contents - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" class="table-of-contents">
+<main role="main">
+<h1 class="class">Table of Contents - Coroutines for Ruby</h1>
+
+<h2 id="pages">Pages</h2>
+<ul>
+  <li class="file">
+    <a href="BSDL.html">BSDL</a>
+  </li>
+    <li class="file">
+    <a href="COPYING.html">COPYING</a>
+  </li>
+    <li class="file">
+    <a href="README_rdoc.html">README</a>
+
+    <ul>
+      <li><a href="README_rdoc.html#label-Coroutines+for+Ruby">Coroutines for Ruby</a>
+      <li><a href="README_rdoc.html#label-Installing">Installing</a>
+      <li><a href="README_rdoc.html#label-Using">Using</a>
+      <li><a href="README_rdoc.html#label-Sources+and+sinks">Sources and sinks</a>
+      <li><a href="README_rdoc.html#label-Pipelines+involving+transformers">Pipelines involving transformers</a>
+      <li><a href="README_rdoc.html#label-Connect+operators">Connect operators</a>
+      <li><a href="README_rdoc.html#label-Links+and+Acknowledgements">Links and Acknowledgements</a>
+      <li><a href="README_rdoc.html#label-Compatibility">Compatibility</a>
+      <li><a href="README_rdoc.html#label-Contributing">Contributing</a>
+    </ul>
+  </li>
+  
+</ul>
+
+<h2 id="classes">Classes and Modules</h2>
+<ul>
+  <li class="class">
+    <a href="Array.html">Array</a>
+  </li>
+  <li class="class">
+    <a href="Consumer.html">Consumer</a>
+  </li>
+  <li class="class">
+    <a href="Consumer/Yielder.html">Consumer::Yielder</a>
+  </li>
+  <li class="class">
+    <a href="CoroutineError.html">CoroutineError</a>
+  </li>
+  <li class="module">
+    <a href="Enumerable.html">Enumerable</a>
+  </li>
+  <li class="module">
+    <a href="Enumerator.html">Enumerator</a>
+  </li>
+  <li class="class">
+    <a href="Enumerator/Lazy.html">Enumerator::Lazy</a>
+  </li>
+  <li class="class">
+    <a href="Hash.html">Hash</a>
+  </li>
+  <li class="class">
+    <a href="IO.html">IO</a>
+  </li>
+  <li class="class">
+    <a href="Method.html">Method</a>
+  </li>
+  <li class="class">
+    <a href="Object.html">Object</a>
+  </li>
+  <li class="class">
+    <a href="Proc.html">Proc</a>
+  </li>
+  <li class="module">
+    <a href="Sink.html">Sink</a>
+  </li>
+  <li class="class">
+    <a href="Sink/InputMapWrapper.html">Sink::InputMapWrapper</a>
+  </li>
+  <li class="class">
+    <a href="Sink/InputReduceWrapper.html">Sink::InputReduceWrapper</a>
+  </li>
+  <li class="class">
+    <a href="Sink/InputRejectWrapper.html">Sink::InputRejectWrapper</a>
+  </li>
+  <li class="class">
+    <a href="Sink/InputSelectWrapper.html">Sink::InputSelectWrapper</a>
+  </li>
+  <li class="class">
+    <a href="Sink/InputWrapper.html">Sink::InputWrapper</a>
+  </li>
+  <li class="class">
+    <a href="Sink/Multicast.html">Sink::Multicast</a>
+  </li>
+  <li class="class">
+    <a href="String.html">String</a>
+  </li>
+  <li class="class">
+    <a href="Symbol.html">Symbol</a>
+  </li>
+  <li class="class">
+    <a href="Transformer.html">Transformer</a>
+  </li>
+  <li class="class">
+    <a href="Transformer/FirstYielder.html">Transformer::FirstYielder</a>
+  </li>
+  <li class="class">
+    <a href="Transformer/Lazy.html">Transformer::Lazy</a>
+  </li>
+  <li class="class">
+    <a href="Transformer/Lazy/Yielder.html">Transformer::Lazy::Yielder</a>
+  </li>
+  <li class="class">
+    <a href="Transformer/SecondYielder.html">Transformer::SecondYielder</a>
+  </li>
+</ul>
+
+<h2 id="methods">Methods</h2>
+<ul>
+
+  <li class="method">
+    <a href="Consumer.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Consumer</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy/Yielder.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Transformer::Lazy::Yielder</span>
+
+  <li class="method">
+    <a href="Transformer/SecondYielder.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Transformer::SecondYielder</span>
+
+  <li class="method">
+    <a href="Sink/Multicast.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Sink::Multicast</span>
+
+  <li class="method">
+    <a href="Sink/InputWrapper.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Sink::InputWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputReduceWrapper.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">Sink::InputReduceWrapper</span>
+
+  <li class="method">
+    <a href="Hash.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Hash</span>
+
+  <li class="method">
+    <a href="Method.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Method</span>
+
+  <li class="method">
+    <a href="Consumer.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Consumer</span>
+
+  <li class="method">
+    <a href="Transformer/SecondYielder.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Transformer::SecondYielder</span>
+
+  <li class="method">
+    <a href="Sink/Multicast.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Sink::Multicast</span>
+
+  <li class="method">
+    <a href="Sink/InputMapWrapper.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Sink::InputMapWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputSelectWrapper.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Sink::InputSelectWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputRejectWrapper.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Sink::InputRejectWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputReduceWrapper.html#method-i-3C-3C">#&lt;&lt;</a>
+    &mdash;
+    <span class="container">Sink::InputReduceWrapper</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-3C-3D">#&lt;=</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Symbol.html#method-i-3C-3D">#&lt;=</a>
+    &mdash;
+    <span class="container">Symbol</span>
+
+  <li class="method">
+    <a href="Proc.html#method-i-3C-3D">#&lt;=</a>
+    &mdash;
+    <span class="container">Proc</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-3C-3D">#&lt;=</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-3E-3D">#&gt;=</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Symbol.html#method-i-3E-3D">#&gt;=</a>
+    &mdash;
+    <span class="container">Symbol</span>
+
+  <li class="method">
+    <a href="Proc.html#method-i-3E-3D">#&gt;=</a>
+    &mdash;
+    <span class="container">Proc</span>
+
+  <li class="method">
+    <a href="Enumerable.html#method-i-3E-3D">#&gt;=</a>
+    &mdash;
+    <span class="container">Enumerable</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-await">#await</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Consumer/Yielder.html#method-i-await">#await</a>
+    &mdash;
+    <span class="container">Consumer::Yielder</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy/Yielder.html#method-i-await">#await</a>
+    &mdash;
+    <span class="container">Transformer::Lazy::Yielder</span>
+
+  <li class="method">
+    <a href="Transformer/FirstYielder.html#method-i-await">#await</a>
+    &mdash;
+    <span class="container">Transformer::FirstYielder</span>
+
+  <li class="method">
+    <a href="Transformer/SecondYielder.html#method-i-await">#await</a>
+    &mdash;
+    <span class="container">Transformer::SecondYielder</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-bytes_transferred">#bytes_transferred</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Consumer.html#method-i-close">#close</a>
+    &mdash;
+    <span class="container">Consumer</span>
+
+  <li class="method">
+    <a href="Sink/Multicast.html#method-i-close">#close</a>
+    &mdash;
+    <span class="container">Sink::Multicast</span>
+
+  <li class="method">
+    <a href="Sink/InputWrapper.html#method-i-close">#close</a>
+    &mdash;
+    <span class="container">Sink::InputWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputReduceWrapper.html#method-i-close">#close</a>
+    &mdash;
+    <span class="container">Sink::InputReduceWrapper</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-close">#close</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-collect">#collect</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-collect_concat">#collect_concat</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-consum_for">#consum_for</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-count">#count</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy/Yielder.html#method-i-define_yield">#define_yield</a>
+    &mdash;
+    <span class="container">Transformer::Lazy::Yielder</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-drop">#drop</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-drop_while">#drop_while</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-dump">#dump</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-each">#each</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Enumerator/Lazy.html#method-i-filter_map">#filter_map</a>
+    &mdash;
+    <span class="container">Enumerator::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-filter_map">#filter_map</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Enumerable.html#method-i-filter_map">#filter_map</a>
+    &mdash;
+    <span class="container">Enumerable</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-find_404">#find_404</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-flat_map">#flat_map</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-follow">#follow</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-in_connect">#in_connect</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-in_connect">#in_connect</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-inject">#inject</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-input_map">#input_map</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-input_reduce">#input_reduce</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-input_reject">#input_reject</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Sink.html#method-i-input_select">#input_select</a>
+    &mdash;
+    <span class="container">Sink</span>
+
+  <li class="method">
+    <a href="Consumer.html#method-i-inspect">#inspect</a>
+    &mdash;
+    <span class="container">Consumer</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-inspect">#inspect</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Sink/InputMapWrapper.html#method-i-inspect">#inspect</a>
+    &mdash;
+    <span class="container">Sink::InputMapWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputSelectWrapper.html#method-i-inspect">#inspect</a>
+    &mdash;
+    <span class="container">Sink::InputSelectWrapper</span>
+
+  <li class="method">
+    <a href="Sink/InputRejectWrapper.html#method-i-inspect">#inspect</a>
+    &mdash;
+    <span class="container">Sink::InputRejectWrapper</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-lazy">#lazy</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-lazy">#lazy</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-map">#map</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-out_connect">#out_connect</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-out_connect">#out_connect</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Enumerable.html#method-i-out_connect">#out_connect</a>
+    &mdash;
+    <span class="container">Enumerable</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-parse">#parse</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-parse_dpkg_status">#parse_dpkg_status</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-reduce">#reduce</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-reject">#reject</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-request_rate">#request_rate</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-select">#select</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-sort">#sort</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-sort_by">#sort_by</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-take">#take</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-take_while">#take_while</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-to_a">#to_a</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="String.html#method-i-to_datetime">#to_datetime</a>
+    &mdash;
+    <span class="container">String</span>
+
+  <li class="method">
+    <a href="Transformer/Lazy.html#method-i-to_h">#to_h</a>
+    &mdash;
+    <span class="container">Transformer::Lazy</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-to_trans">#to_trans</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Symbol.html#method-i-to_trans">#to_trans</a>
+    &mdash;
+    <span class="container">Symbol</span>
+
+  <li class="method">
+    <a href="Proc.html#method-i-to_trans">#to_trans</a>
+    &mdash;
+    <span class="container">Proc</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-trans_for">#trans_for</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer.html#method-i-transformer_chain">#transformer_chain</a>
+    &mdash;
+    <span class="container">Transformer</span>
+
+  <li class="method">
+    <a href="Object.html#method-i-unwrap">#unwrap</a>
+    &mdash;
+    <span class="container">Object</span>
+
+  <li class="method">
+    <a href="Transformer/FirstYielder.html#method-i-yield">#yield</a>
+    &mdash;
+    <span class="container">Transformer::FirstYielder</span>
+
+  <li class="method">
+    <a href="Transformer/SecondYielder.html#method-i-yield">#yield</a>
+    &mdash;
+    <span class="container">Transformer::SecondYielder</span>
+</ul>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Object - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">BasicObject
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-await">#await</a>
+    
+    <li ><a href="#method-i-bytes_transferred">#bytes_transferred</a>
+    
+    <li ><a href="#method-i-consum_for">#consum_for</a>
+    
+    <li ><a href="#method-i-dump">#dump</a>
+    
+    <li ><a href="#method-i-find_404">#find_404</a>
+    
+    <li ><a href="#method-i-follow">#follow</a>
+    
+    <li ><a href="#method-i-parse">#parse</a>
+    
+    <li ><a href="#method-i-parse_dpkg_status">#parse_dpkg_status</a>
+    
+    <li ><a href="#method-i-request_rate">#request_rate</a>
+    
+    <li ><a href="#method-i-trans_for">#trans_for</a>
+    
+    <li ><a href="#method-i-unwrap">#unwrap</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Object">
+  <h1 id="class-Object" class="class">
+    class Object
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+      
+        <dt id="COLNAMES">COLNAMES
+        
+        <dd>
+        
+      
+        <dt id="COLTYPES">COLTYPES
+        
+        <dd>
+        
+      
+        <dt id="DAY">DAY
+        
+        <dd>
+        
+      
+        <dt id="Multicast">Multicast
+        
+        <dd><p>convenience alias for <a href="Sink/Multicast.html">Sink::Multicast</a>
+(this is not defined when requiring just coroutines/base)</p>
+        
+      
+      </dl>
+    </section>
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-await" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            await &rarr; obj
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Evaluates to the next input value from the associated consumption context.
+In order to create a consumption context, you have to use <a
+href="Object.html#method-i-consum_for">#consum_for</a> or <a
+href="Object.html#method-i-trans_for">#trans_for</a> on the method calling
+await.</p>
+
+<p>The behavior of await is undefined if the method using it is called without
+being wrapped by <a href="Object.html#method-i-consum_for">#consum_for</a>
+or trans_for. It should be an error to do so, as it is an error to use
+yield without an associated block; however, since await is not a language
+primitive (like yield), it is not always possible to enforce this. This is
+likely to change in a future version if a better solution can be found.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="await-source">
+            <pre><span class="ruby-comment"># File lib/coroutines.rb, line 121</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">await</span>
+        <span class="ruby-identifier">yielder</span> = <span class="ruby-constant">Fiber</span>.<span class="ruby-identifier">current</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@yielder</span>)
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">CoroutineError</span>, <span class="ruby-string">&quot;you can&#39;t call a consumer&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">yielder</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">yielder</span>.<span class="ruby-identifier">await</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-bytes_transferred" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">bytes_transferred</span><span
+            class="method-args">() { |total| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="bytes_transferred-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">bytes_transferred</span>
+        <span class="ruby-identifier">total</span> = <span class="ruby-value">0</span>
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">total</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span>[<span class="ruby-string">&quot;bytes&quot;</span>]
+                <span class="ruby-keyword">yield</span> <span class="ruby-identifier">total</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-consum_for" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            consum_for(method, *args) &rarr; consumer
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Creates a new <a href="Consumer.html">Consumer</a> coroutine from the given
+method. This is analogous to using Kernel#enum_for to create an <a
+href="Enumerator.html">Enumerator</a> instance. The method is called
+immediately (with the given <code>args</code>). It executes until the first
+call to <a href="Object.html#method-i-await">await</a>, at which point <a
+href="Object.html#method-i-consum_for">#consum_for</a> returns the <a
+href="Consumer.html">Consumer</a> instance. Calling consumer &lt;&lt; obj
+resumes the consumer at the point where it last executed <a
+href="Object.html#method-i-await">await</a>, which evaluates to
+<code>obj</code>.</p>
+
+<p>Calling consumer.close raises StopIteration at the point where the consumer
+last executed <a href="Object.html#method-i-await">await</a>; it is
+expected that it will terminate without executing <a
+href="Object.html#method-i-await">await</a> again. <a
+href="Consumer.html#method-i-close">Consumer#close</a> evaluates to the
+return value of the method.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">counter</span>(<span class="ruby-identifier">start</span>)
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">start</span>
+    <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span> }
+    <span class="ruby-node">&quot;Final value: #{result}&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">co</span> = <span class="ruby-identifier">consum_for</span> :<span class="ruby-identifier">counter</span>, <span class="ruby-value">10</span>  <span class="ruby-comment">#=&gt; #&lt;Consumer: main:counter (running)&gt;</span>
+<span class="ruby-identifier">co</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">10</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">1000</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">10000</span>
+<span class="ruby-identifier">co</span>.<span class="ruby-identifier">close</span>  <span class="ruby-comment">#=&gt; &quot;Final value: 11020&quot;</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="consum_for-source">
+            <pre><span class="ruby-comment"># File lib/coroutines.rb, line 156</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">consum_for</span>(<span class="ruby-identifier">meth</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+        <span class="ruby-identifier">cons</span> = <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-constant">Fiber</span>.<span class="ruby-identifier">current</span>.<span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-value">:@yielder</span>, <span class="ruby-identifier">y</span>)
+                <span class="ruby-identifier">send</span>(<span class="ruby-identifier">meth</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;#{inspect}:#{meth}&quot;</span>
+        <span class="ruby-identifier">cons</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:inspect</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">state</span> = <span class="ruby-keyword">if</span> <span class="ruby-ivar">@fiber</span>.<span class="ruby-identifier">alive?</span> <span class="ruby-keyword">then</span> <span class="ruby-string">&quot;running&quot;</span> <span class="ruby-keyword">else</span> <span class="ruby-ivar">@result</span>.<span class="ruby-identifier">inspect</span> <span class="ruby-keyword">end</span>
+                <span class="ruby-node">&quot;#&lt;Consumer: #{description} (#{state})&gt;&quot;</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">cons</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-dump" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">dump</span><span
+            class="method-args">(label)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="dump-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">dump</span>(<span class="ruby-identifier">label</span>)
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{label}: #{await}&quot;</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-find_404" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">find_404</span><span
+            class="method-args">() { |%w{status datetime request}| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Reads log entry Hashes; for each log entry with status 404, yields</p>
+          
+          
+
+          
+          <div class="method-source-code" id="find_404-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">find_404</span>
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">r</span> = <span class="ruby-identifier">await</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">r</span>[<span class="ruby-string">&quot;status&quot;</span>] <span class="ruby-operator">==</span> <span class="ruby-value">404</span>
+                        <span class="ruby-keyword">yield</span> <span class="ruby-operator">%</span><span class="ruby-identifier">w</span>{<span class="ruby-identifier">status</span> <span class="ruby-identifier">datetime</span> <span class="ruby-identifier">request</span>}.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">col</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>[<span class="ruby-identifier">col</span>].<span class="ruby-identifier">to_s</span>}.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-follow" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">follow</span><span
+            class="method-args">(path) { |readline| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="follow-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">follow</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-identifier">file</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-keyword">yield</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">readline</span>
+                <span class="ruby-keyword">rescue</span> <span class="ruby-constant">EOFError</span>
+                        <span class="ruby-identifier">sleep</span> <span class="ruby-value">0.1</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">file</span>.<span class="ruby-identifier">close</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-parse" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse</span><span
+            class="method-args">() { |log_entry| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Reads log lines in the following format: host referrer user [timestamp]
+“GET|POST request protocol” status bytes … For each parsable line, yields a
+<a href="Hash.html">Hash</a> with the keys given by <a
+href="Object.html#COLNAMES">COLNAMES</a> and the values parsed according to
+<a href="Object.html#COLTYPES">COLTYPES</a>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="parse-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">await</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/(\S+) (\S+) (\S+) \[(.*?)\] &quot;(\S+) (\S+) (\S+)&quot; (\S+) (\S+)/</span>
+                        <span class="ruby-identifier">log_entry</span> = <span class="ruby-identifier">$~</span>.<span class="ruby-identifier">captures</span>.<span class="ruby-identifier">zip</span>(<span class="ruby-constant">COLNAMES</span>, <span class="ruby-constant">COLTYPES</span>).
+                                <span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">val</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">|</span> [<span class="ruby-identifier">name</span>, <span class="ruby-identifier">val</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">type</span>)] }.
+                                <span class="ruby-identifier">out_connect</span>(<span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>)
+                        <span class="ruby-keyword">yield</span> <span class="ruby-identifier">log_entry</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-parse_dpkg_status" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse_dpkg_status</span><span
+            class="method-args">() { |strip, strip| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p><a href="Transformer.html">Transformer</a> that accepts lines of text and</p>
+<ul><li>
+<p>appends any lines starting with a space to the previous line</p>
+</li><li>
+<p>parses each set of non-empty concatenated lines as a key:value pair and
+yields that pair as an <a href="Array.html">Array</a></p>
+</li></ul>
+          
+          
+
+          
+          <div class="method-source-code" id="parse_dpkg_status-source">
+            <pre><span class="ruby-comment"># File examples/dpkgstatus-bench.rb, line 11</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse_dpkg_status</span>
+        <span class="ruby-identifier">line</span> = <span class="ruby-identifier">await</span>
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">accum</span> = <span class="ruby-string">&quot;&quot;</span>
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-keyword">begin</span>
+                                <span class="ruby-identifier">accum</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">line</span>
+                                <span class="ruby-identifier">line</span> = <span class="ruby-identifier">await</span>
+                        <span class="ruby-keyword">end</span> <span class="ruby-keyword">while</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">start_with?</span> <span class="ruby-string">&quot; &quot;</span>
+                <span class="ruby-keyword">ensure</span>
+                        <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">accum</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;:&quot;</span>, <span class="ruby-value">2</span>)
+                        <span class="ruby-keyword">yield</span> [<span class="ruby-identifier">key</span>.<span class="ruby-identifier">strip</span>, <span class="ruby-identifier">value</span>.<span class="ruby-identifier">strip</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">accum</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&quot;\n&quot;</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-request_rate" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">request_rate</span><span
+            class="method-args">() { |to_f| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="request_rate-source">
+            <pre><span class="ruby-comment"># File examples/parse_apache.rb, line 51</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">request_rate</span>
+        <span class="ruby-identifier">last</span> = <span class="ruby-identifier">await</span>[<span class="ruby-string">&quot;datetime&quot;</span>]
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">n</span> = <span class="ruby-value">0</span>
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-identifier">this</span> = <span class="ruby-identifier">await</span>[<span class="ruby-string">&quot;datetime&quot;</span>]
+                        <span class="ruby-identifier">n</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+                <span class="ruby-keyword">end</span> <span class="ruby-keyword">while</span> <span class="ruby-identifier">this</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">last</span>
+                <span class="ruby-keyword">yield</span> <span class="ruby-identifier">n</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> (<span class="ruby-identifier">this</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">last</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-constant">DAY</span>
+                <span class="ruby-identifier">last</span> = <span class="ruby-identifier">this</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-trans_for" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            trans_for(method, *args) &rarr; transformer
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Creates a new <a href="Transformer.html">Transformer</a> instance that
+wraps the given method. This is analogous to using Kernel#enum_for to
+create an <a href="Enumerator.html">Enumerator</a> instance, or using <a
+href="Object.html#method-i-consum_for">#consum_for</a> to create a <a
+href="Consumer.html">Consumer</a> instance. The method is not executed
+immediately. The resulting <a href="Transformer.html">Transformer</a> can
+be connected to an enumerable (using transformer.in_connect(enum)) or to a
+sink (using transformer.out_connect(sink)). The point at which the
+transformer method gets started depends on how it is connected; in any case
+however, the method will be called with the <code>args</code> given to
+trans_for. See <a href="Transformer.html">Transformer</a> for details.</p>
+
+<p>Within the transformer method, <a
+href="Object.html#method-i-await">await</a> can be used to read the next
+input value (as in a <a href="Consumer.html">Consumer</a>, compare <a
+href="Object.html#method-i-consum_for">#consum_for</a>), and yield can be
+used to produce an output value (i.e., when it is called, the method is
+given a block which accepts its output).</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">running_sum</span>(<span class="ruby-identifier">start</span>)
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">start</span>
+  <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span>; <span class="ruby-keyword">yield</span> <span class="ruby-identifier">result</span> }
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">tr</span> = <span class="ruby-identifier">trans_for</span> :<span class="ruby-identifier">running_sum</span>, <span class="ruby-value">3</span>  <span class="ruby-comment">#=&gt; #&lt;Transformer: main:running_sum&gt;</span>
+<span class="ruby-identifier">sums</span> = (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>).<span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">tr</span>)  <span class="ruby-comment">#=&gt; #&lt;Enumerator: #&lt;Transformer: main:running_sum&gt; &lt;= 1..10&gt;</span>
+<span class="ruby-identifier">sums</span>.<span class="ruby-identifier">to_a</span>  <span class="ruby-comment">#=&gt; [4, 6, 9, 13, 18, 24, 31, 39, 48, 58]</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="trans_for-source">
+            <pre><span class="ruby-comment"># File lib/coroutines.rb, line 198</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">trans_for</span>(<span class="ruby-identifier">meth</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+        <span class="ruby-identifier">trans</span> = <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-constant">Fiber</span>.<span class="ruby-identifier">current</span>.<span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-value">:@yielder</span>, <span class="ruby-identifier">y</span>)
+                <span class="ruby-identifier">send</span>(<span class="ruby-identifier">meth</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">y</span>.<span class="ruby-identifier">method</span>(<span class="ruby-value">:yield</span>))
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">description</span> =<span class="ruby-node">&quot;#{inspect}:#{meth}&quot;</span>
+        <span class="ruby-identifier">trans</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:inspect</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-node">&quot;#&lt;Transformer: #{description}&gt;&quot;</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">trans</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-unwrap" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">unwrap</span><span
+            class="method-args">(header=0x61, footer=0x62, escape=0xAB) { |frame| ... }</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Example shamelessly stolen from <a
+href="http://eli.thegreenplace.net/2009/08/29/co-routines-as-an-alternative-to-state-machines">eli.thegreenplace.net/2009/08/29/co-routines-as-an-alternative-to-state-machines</a>/</p>
+          
+          
+
+          
+          <div class="method-source-code" id="unwrap-source">
+            <pre><span class="ruby-comment"># File examples/frames.rb, line 6</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">unwrap</span>(<span class="ruby-identifier">header</span>=<span class="ruby-value">0x61</span>, <span class="ruby-identifier">footer</span>=<span class="ruby-value">0x62</span>, <span class="ruby-identifier">escape</span>=<span class="ruby-value">0xAB</span>)
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">byte</span> = <span class="ruby-identifier">await</span>
+                <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">byte</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">header</span>
+
+                <span class="ruby-identifier">frame</span> = <span class="ruby-string">&quot;&quot;</span>
+                <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+                        <span class="ruby-identifier">byte</span> = <span class="ruby-identifier">await</span>
+                        <span class="ruby-keyword">case</span> <span class="ruby-identifier">byte</span>
+                        <span class="ruby-keyword">when</span> <span class="ruby-identifier">footer</span>
+                                <span class="ruby-keyword">yield</span> <span class="ruby-identifier">frame</span>
+                                <span class="ruby-keyword">break</span>
+                        <span class="ruby-keyword">when</span> <span class="ruby-identifier">escape</span>
+                                <span class="ruby-identifier">frame</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">await</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-value">16</span>)
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">frame</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">byte</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-value">16</span>)
+                        <span class="ruby-keyword">end</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module Sink - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-3C-3D">#&lt;=</a>
+    
+    <li ><a href="#method-i-close">#close</a>
+    
+    <li ><a href="#method-i-in_connect">#in_connect</a>
+    
+    <li ><a href="#method-i-input_map">#input_map</a>
+    
+    <li ><a href="#method-i-input_reduce">#input_reduce</a>
+    
+    <li ><a href="#method-i-input_reject">#input_reject</a>
+    
+    <li ><a href="#method-i-input_select">#input_select</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-Sink">
+  <h1 id="module-Sink" class="module">
+    module Sink
+  </h1>
+
+  <section class="description">
+    
+<p>The <code>Sink</code> mixin provides classes that can accept streams of
+values with several utility methods. Classes using this mixin must at least
+provide an operator &lt;&lt; which accepts a value and returns the sink
+instance (allowing chaining). Optionally, the class may provide a close
+method that signals end of input and (also optionally) retrives a result
+value.</p>
+
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-3C-3D" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            sink &lt;= enum  &rarr; obj
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            sink &lt;= trans &rarr; new_consum
+          </span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>In the first form, iterate over <code>enum</code> and write each result to
+<code>sink</code> using &lt;&lt;; then return the result of sink.close.</p>
+
+<p>In the second form, create a new <a href="Consumer.html">Consumer</a> by
+connecting the output of <code>trans</code> (which must be convertible to a
+<a href="Transformer.html">Transformer</a> using the to_trans method) to
+the input of <code>sink</code>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="3C-3D-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/operators.rb, line 38</span>
+<span class="ruby-keyword">def</span> <span class="ruby-operator">&lt;=</span>(<span class="ruby-identifier">other</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:each</span>
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-identifier">other</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-keyword">self</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">x</span> }
+                <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StopIteration</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-identifier">close</span>
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:to_trans</span>
+                <span class="ruby-identifier">other</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-keyword">self</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-close" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">close</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>May be overriden by classes using the <a href="Sink.html">Sink</a> mixin.
+The default implementation just returns self.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="close-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 9</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>
+        <span class="ruby-keyword">self</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-in_connect" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            in_connect(enum)  &rarr; obj
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            in_connect(trans) &rarr; new_consum
+          </span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>In the first form, iterate over <code>enum</code> and write each result to
+<code>sink</code> using &lt;&lt;; then return the result of sink.close.</p>
+
+<p>In the second form, create a new <a href="Consumer.html">Consumer</a> by
+connecting the output of <code>trans</code> (which must be convertible to a
+<a href="Transformer.html">Transformer</a> using the to_trans method) to
+<code>sink</code>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="in_connect-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 23</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">in_connect</span>(<span class="ruby-identifier">other</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:each</span>
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-identifier">other</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-keyword">self</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">x</span> }
+                <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StopIteration</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-identifier">close</span>
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:to_trans</span>
+                <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_trans</span>.<span class="ruby-identifier">out_connect</span>(<span class="ruby-keyword">self</span>)
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-input_map" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            input_map{ |obj| block } &rarr; new_sink
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns a new sink which supplies each of its input values to the given
+block and feeds each result of the block to <code>sink</code>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="input_map-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 40</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">input_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">InputMapWrapper</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-input_reduce" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            input_reduce(initial=nil){ |memo, obj| block } &rarr; new_sink
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns a new sink which reduces its input values to a single value, as in
+Enumerable#reduce.  When <code>new_sink</code> is closed, the reduced value
+is fed to <code>sink</code> and <code>sink</code> is closed as well.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="input_reduce-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">input_reduce</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">InputReduceWrapper</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-input_reject" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            input_reject{ |obj| block } &rarr; new_sink
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns a new sink which feeds those inputs for which <code>block</code>
+returns a false value to <code>sink</code> and discards all others.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="input_reject-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">input_reject</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">InputRejectWrapper</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-input_select" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            input_select{ |obj| block } &rarr; new_sink
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns a new sink which feeds those inputs for which <code>block</code>
+returns a true value to <code>sink</code> and discards all others.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="input_select-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/sink.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">input_select</span>
+        <span class="ruby-constant">InputSelectWrapper</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

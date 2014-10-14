@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Transformer - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-3C-3D">#&lt;=</a>
+    
+    <li ><a href="#method-i-3E-3D">#&gt;=</a>
+    
+    <li ><a href="#method-i-in_connect">#in_connect</a>
+    
+    <li ><a href="#method-i-inspect">#inspect</a>
+    
+    <li ><a href="#method-i-lazy">#lazy</a>
+    
+    <li ><a href="#method-i-out_connect">#out_connect</a>
+    
+    <li ><a href="#method-i-to_trans">#to_trans</a>
+    
+    <li ><a href="#method-i-transformer_chain">#transformer_chain</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Transformer">
+  <h1 id="class-Transformer" class="class">
+    class Transformer
+  </h1>
+
+  <section class="description">
+    
+<p>A class implementing transformer coroutines</p>
+
+<p>A <a href="Transformer.html">Transformer</a> can be created by the
+following methods:</p>
+<ul><li>
+<p><a href="Object.html#method-i-trans_for">Object#trans_for</a></p>
+</li><li>
+<p><a href="Transformer.html#method-c-new">::new</a></p>
+</li></ul>
+
+<p>Transformers are pieces of code that accept input values and produce output
+values (without returning from their execution context like in a regular
+method call). They are used by connecting either their input to an
+enumerable or their output to a sink (or both, using <a
+href="Sink.html#method-i-in_connect">Sink#in_connect</a> or <a
+href="Enumerable.html#method-i-out_connect">Enumerable#out_connect</a>). An
+enumerable is any object implementing an iterator method each; a sink is
+any object implementing the &lt;&lt; operator (which is assumed to store or
+output the supplied values in some form).</p>
+
+<p>The input of a transformer is connected to an enumerable <code>enum</code>
+using trans.in_connect(enum), the result of which is a new <a
+href="Enumerator.html">Enumerator</a> instance. The transformer is started
+upon iterating over this <a href="Enumerator.html">Enumerator</a>. Whenever
+the transformer requests a new input value (see <a
+href="Object.html#method-i-trans_for">Object#trans_for</a> and
+Transformer#new for how to do this), iteration over <code>enum</code> is
+resumed. The output values of the transformer (again, see <a
+href="Object.html#method-i-trans_for">Object#trans_for</a> and
+Transformer#new) are yielded by the enclosing <a
+href="Enumerator.html">Enumerator</a>.  When <code>enum</code> is
+exhausted, StopIteration is raised at the point where the transformer last
+requested an input value. It is expected that the transformer will then
+terminate without requesting any more values (though it may execute e.g.
+some cleanup actions).</p>
+
+<p>The output of a transformer is connected to a sink using
+trans.out_connect(sink), the result of which is a new <a
+href="Consumer.html">Consumer</a> instance. The transformer starts
+executing right away; when it requests its first input value, <a
+href="Transformer.html#method-i-out_connect">#out_connect</a> returns.
+Input values supplied using &lt;&lt; to the enclosing <a
+href="Consumer.html">Consumer</a> are forwarded to the transformer by
+resuming execution at the point where it last requested an input value.
+Output values produced by the transformer are fed to sink#&lt;&lt;. After
+terminating, the result of the new <a href="Consumer.html">Consumer</a> is
+the value returned by sink.close (see <a
+href="Consumer.html#attribute-i-result">Consumer#result</a> and <a
+href="Consumer.html#method-i-close">Consumer#close</a>).</p>
+
+<p>Transformers can also be chained together by connecting the output of one
+the input the next using trans.out_connect(other_trans) or
+trans.in_connect(other_trans). See <a
+href="Transformer.html#method-i-out_connect">#out_connect</a> and <a
+href="Transformer.html#method-i-in_connect">#in_connect</a> for details.</p>
+
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            new { |yielder| ... } &rarr; trans
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Creates a new <a href="Transformer.html">Transformer</a> coroutine defined
+by the given block.</p>
+
+<p>The block is called with a “yielder” object as parameter.
+<code>yielder</code> can be used to retrieve a value from the consumption
+context by calling its await method (as in <a
+href="Consumer.html#method-c-new">Consumer.new</a>), and to yield a value
+by calling its yield method (as in Enumerator.new).</p>
+
+<pre class="ruby"><span class="ruby-identifier">running_sum</span> = <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">result</span> = <span class="ruby-value">0</span>
+  <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">await</span>; <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span> <span class="ruby-identifier">result</span> }
+<span class="ruby-keyword">end</span>
+
+(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">3</span>).<span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">running_sum</span>).<span class="ruby-identifier">out_connect</span>([])  <span class="ruby-comment"># =&gt; [1, 3, 6]</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 164</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-ivar">@self</span> = <span class="ruby-identifier">block</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-3C-3D" class="method-detail method-alias">
+        
+        <div class="method-heading">
+          <span class="method-name">&lt;=</span><span
+            class="method-args">(source)</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+        </div>
+
+        
+
+        
+        <div class="aliases">
+          Alias for: <a href="Transformer.html#method-i-in_connect">in_connect</a>
+        </div>
+        
+      </div>
+
+    
+      <div id="method-i-3E-3D" class="method-detail method-alias">
+        
+        <div class="method-heading">
+          <span class="method-name">&gt;=</span><span
+            class="method-args">(sink)</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+        </div>
+
+        
+
+        
+        <div class="aliases">
+          Alias for: <a href="Transformer.html#method-i-out_connect">out_connect</a>
+        </div>
+        
+      </div>
+
+    
+      <div id="method-i-in_connect" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            in_connect(other_trans)  &rarr; new_trans
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            in_connect(enum)         &rarr; lazy_enumerator
+          </span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>In the first form, creates a new <a href="Transformer.html">Transformer</a>
+that has the input of <code>trans</code> connected to the output of
+<code>other_trans</code>.</p>
+
+<p>In the second form, creates a new lazy <a
+href="Enumerator.html">Enumerator</a> by connecting the output of
+<code>enum</code> to the input of <code>trans</code>. See <a
+href="Transformer.html">Transformer</a> for details.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="in_connect-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 189</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">in_connect</span>(<span class="ruby-identifier">source</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">source</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:each</span>
+                <span class="ruby-keyword">return</span> <span class="ruby-identifier">source</span>.<span class="ruby-identifier">to_trans</span>.<span class="ruby-identifier">transformer_chain</span> <span class="ruby-keyword">self</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">source_enum</span> = <span class="ruby-identifier">source</span>.<span class="ruby-identifier">to_enum</span>
+        <span class="ruby-identifier">enum</span> = <span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:await</span> <span class="ruby-keyword">do</span>
+                        <span class="ruby-identifier">source_enum</span>.<span class="ruby-identifier">next</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@self</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">y</span>)
+        <span class="ruby-keyword">end</span>.<span class="ruby-identifier">lazy</span>
+
+        <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;#&lt;Enumerator::Lazy: #{inspect} &lt;= #{source.inspect}&gt;&quot;</span>
+        <span class="ruby-identifier">enum</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:inspect</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">description</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">enum</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+        <div class="aliases">
+          Also aliased as: <a href="Transformer.html#method-i-3C-3D">&lt;=</a>
+        </div>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-inspect" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">inspect</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="inspect-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 168</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inspect</span>
+        <span class="ruby-node">&quot;#&lt;Transformer: 0x#{object_id.to_s(16)}&gt;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-lazy" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            lazy &rarr; lazy_trans
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns a “lazy enumeration like” transformer. More precisely, the object
+returned can in many situations be used as if it were an <a
+href="Enumerator.html">Enumerator</a> returned by trans.in_connect, since
+it implements work-alikes of many <a href="Enumerable.html">Enumerable</a>
+methods. Note however that the return types of those methods differ: where
+an <a href="Enumerator.html">Enumerator</a> method would return a new <a
+href="Enumerator.html">Enumerator</a>, the corresponding lazy transformer
+returns a new <a href="Transformer.html">Transformer</a>; where an <a
+href="Enumerator.html">Enumerator</a> would return a single value, the lazy
+transformer returns a <a href="Consumer.html">Consumer</a>.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">running_sum</span> = <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">result</span> = <span class="ruby-value">0</span>
+  <span class="ruby-identifier">loop</span> { <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">await</span>; <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span> <span class="ruby-identifier">result</span> }
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">sum_str</span> = <span class="ruby-identifier">running_sum</span>.<span class="ruby-identifier">lazy</span>.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_s</span>}
+<span class="ruby-comment"># =&gt; a Transformer</span>
+(<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>).<span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">sum_str</span>).<span class="ruby-identifier">to_a</span>
+<span class="ruby-comment"># =&gt; [&quot;1&quot;, &quot;3&quot;, &quot;6&quot;, &quot;10&quot;, &quot;15&quot;, &quot;21&quot;, &quot;28&quot;, &quot;36&quot;, &quot;45&quot;, &quot;55&quot;]</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="lazy-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 534</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">lazy</span>
+        <span class="ruby-constant">Lazy</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">self</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-out_connect" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            out_connect(other_trans)  &rarr; new_trans
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            out_connect(sink)         &rarr; consum
+          </span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>In the first form, creates a new <a href="Transformer.html">Transformer</a>
+that has the output of <code>trans</code> connected to the input of
+<code>other_trans</code>.</p>
+
+<p>In the second form, creates a new <a href="Consumer.html">Consumer</a> by
+connecting the output of <code>trans</code> to the input of
+<code>sink</code>. See <a href="Transformer.html">Transformer</a> for
+details.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="out_connect-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 219</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">sink</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:&lt;&lt;</span>
+                <span class="ruby-keyword">return</span> <span class="ruby-identifier">transformer_chain</span> <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">to_trans</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">consum</span> = <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">sink</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">args</span>
+                        <span class="ruby-identifier">y</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">singleton_class</span>.<span class="ruby-identifier">instance_eval</span> { <span class="ruby-identifier">alias_method</span> <span class="ruby-value">:&lt;&lt;</span>, <span class="ruby-value">:yield</span> }
+                <span class="ruby-keyword">begin</span>
+                        <span class="ruby-ivar">@self</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">y</span>)
+                <span class="ruby-keyword">rescue</span> <span class="ruby-constant">StopIteration</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-identifier">sink</span>.<span class="ruby-identifier">close</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;#&lt;Consumer: #{inspect} &gt;= #{sink.inspect}&gt;&quot;</span>
+        <span class="ruby-identifier">consum</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:inspect</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">description</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">consum</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+        <div class="aliases">
+          Also aliased as: <a href="Transformer.html#method-i-3E-3D">&gt;=</a>
+        </div>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_trans" class="method-detail ">
+        
+        
+        <div class="method-heading">
+          <span class="method-callseq">
+            to_trans  &rarr; transformer
+          </span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+        
+
+        <div class="method-description">
+          
+          <p>Returns self.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="to_trans-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 176</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_trans</span>
+        <span class="ruby-keyword">self</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-transformer_chain" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">transformer_chain</span><span
+            class="method-args">(other)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="transformer_chain-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 610</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">transformer_chain</span>(<span class="ruby-identifier">other</span>)
+        <span class="ruby-identifier">first</span> = <span class="ruby-ivar">@self</span>
+        <span class="ruby-identifier">second</span> = <span class="ruby-identifier">other</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@self</span>)
+
+        <span class="ruby-identifier">trans</span> = <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">fib</span> = <span class="ruby-constant">Fiber</span>.<span class="ruby-identifier">new</span> { <span class="ruby-identifier">first</span>.<span class="ruby-identifier">call</span> <span class="ruby-constant">FirstYielder</span>.<span class="ruby-identifier">new</span> }
+                <span class="ruby-identifier">second</span>.<span class="ruby-identifier">call</span>(<span class="ruby-constant">SecondYielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>, <span class="ruby-identifier">fib</span>)
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;#{inspect} &gt;= #{other.inspect}&quot;</span>
+        <span class="ruby-identifier">trans</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-value">:inspect</span> <span class="ruby-keyword">do</span>
+                <span class="ruby-identifier">description</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">trans</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

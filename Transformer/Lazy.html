@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Transformer::Lazy - Coroutines for Ruby</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../fonts.css" rel="stylesheet">
+<link href="../rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../Object.html">Object</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-collect">#collect</a>
+    
+    <li ><a href="#method-i-collect_concat">#collect_concat</a>
+    
+    <li ><a href="#method-i-count">#count</a>
+    
+    <li ><a href="#method-i-drop">#drop</a>
+    
+    <li ><a href="#method-i-drop_while">#drop_while</a>
+    
+    <li ><a href="#method-i-each">#each</a>
+    
+    <li ><a href="#method-i-filter_map">#filter_map</a>
+    
+    <li ><a href="#method-i-flat_map">#flat_map</a>
+    
+    <li ><a href="#method-i-inject">#inject</a>
+    
+    <li ><a href="#method-i-lazy">#lazy</a>
+    
+    <li ><a href="#method-i-map">#map</a>
+    
+    <li ><a href="#method-i-out_connect">#out_connect</a>
+    
+    <li ><a href="#method-i-reduce">#reduce</a>
+    
+    <li ><a href="#method-i-reject">#reject</a>
+    
+    <li ><a href="#method-i-select">#select</a>
+    
+    <li ><a href="#method-i-sort">#sort</a>
+    
+    <li ><a href="#method-i-sort_by">#sort_by</a>
+    
+    <li ><a href="#method-i-take">#take</a>
+    
+    <li ><a href="#method-i-take_while">#take_while</a>
+    
+    <li ><a href="#method-i-to_a">#to_a</a>
+    
+    <li ><a href="#method-i-to_h">#to_h</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Transformer::Lazy">
+  <h1 id="class-Transformer::Lazy" class="class">
+    class Transformer::Lazy
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(trans)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 246</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">trans</span>)
+        <span class="ruby-ivar">@trans</span> = <span class="ruby-identifier">trans</span>.<span class="ruby-identifier">instance_variable_get</span> <span class="ruby-value">:@self</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-collect" class="method-detail method-alias">
+        
+        <div class="method-heading">
+          <span class="method-name">collect</span><span
+            class="method-args">(&block)</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+        </div>
+
+        
+
+        
+        <div class="aliases">
+          Alias for: <a href="Lazy.html#method-i-map">map</a>
+        </div>
+        
+      </div>
+
+    
+      <div id="method-i-collect_concat" class="method-detail method-alias">
+        
+        <div class="method-heading">
+          <span class="method-name">collect_concat</span><span
+            class="method-args">(&block)</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+        </div>
+
+        
+
+        
+        <div class="aliases">
+          Alias for: <a href="Lazy.html#method-i-flat_map">flat_map</a>
+        </div>
+        
+      </div>
+
+    
+      <div id="method-i-count" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">count</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="count-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 270</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">count</span>
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">n</span> = <span class="ruby-value">0</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">n</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">n</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-drop" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">drop</span><span
+            class="method-args">(n)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="drop-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 283</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">drop</span>(<span class="ruby-identifier">n</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">to_drop</span> = <span class="ruby-identifier">n</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">to_drop</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                                <span class="ruby-identifier">to_drop</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-drop_while" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">drop_while</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="drop_while-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 299</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">drop_while</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">dropping</span> = <span class="ruby-keyword">true</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">dropping</span>
+                                <span class="ruby-keyword">if</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                                        <span class="ruby-identifier">dropping</span> = <span class="ruby-keyword">false</span>
+                                        <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                                <span class="ruby-keyword">end</span>
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-each" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">each</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="each-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 318</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-filter_map" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">filter_map</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="filter_map-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 329</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">filter_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-identifier">x</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">nil?</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-flat_map" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">flat_map</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="flat_map-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 341</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:to_ary</span>
+                                <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_ary</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">xx</span><span class="ruby-operator">|</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span> <span class="ruby-identifier">xx</span> }
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span> <span class="ruby-identifier">x</span>
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+        <div class="aliases">
+          Also aliased as: <a href="Lazy.html#method-i-collect_concat">collect_concat</a>
+        </div>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-inject" class="method-detail method-alias">
+        
+        <div class="method-heading">
+          <span class="method-name">inject</span><span
+            class="method-args">(*args)</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+        </div>
+
+        
+
+        
+        <div class="aliases">
+          Alias for: <a href="Lazy.html#method-i-reduce">reduce</a>
+        </div>
+        
+      </div>
+
+    
+      <div id="method-i-lazy" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">lazy</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="lazy-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 250</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">lazy</span>
+        <span class="ruby-keyword">self</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-map" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">map</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="map-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 358</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>))
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+        <div class="aliases">
+          Also aliased as: <a href="Lazy.html#method-i-collect">collect</a>
+        </div>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-out_connect" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">out_connect</span><span
+            class="method-args">(other)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="out_connect-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 370</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">other</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-ivar">@trans</span>).<span class="ruby-identifier">out_connect</span>(<span class="ruby-identifier">other</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-reduce" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">reduce</span><span
+            class="method-args">(*args)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="reduce-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 374</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">reduce</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">block_given?</span>
+                <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+                        <span class="ruby-keyword">return</span> <span class="ruby-identifier">reduce</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_proc</span>)
+                <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">2</span>
+                        <span class="ruby-keyword">return</span> <span class="ruby-identifier">reduce</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>], <span class="ruby-operator">&amp;</span><span class="ruby-identifier">args</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_proc</span>)
+                <span class="ruby-keyword">else</span>
+                        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;wrong number of arguments&quot;</span>
+                <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;wrong number of arguments&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">block</span> = <span class="ruby-identifier">proc</span>
+
+        <span class="ruby-identifier">memo</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword">then</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">else</span> <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword">end</span>
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">memo</span>.<span class="ruby-identifier">nil?</span>
+                                <span class="ruby-identifier">memo</span> = <span class="ruby-identifier">value</span>
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">memo</span> = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">value</span>
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">memo</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+        <div class="aliases">
+          Also aliased as: <a href="Lazy.html#method-i-inject">inject</a>
+        </div>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-reject" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">reject</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="reject-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 404</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">reject</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-select" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">select</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="select-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 415</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-sort" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">sort</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="sort-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 458</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">sort</span>
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">result</span> = []
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">value</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">result</span>.<span class="ruby-identifier">sort</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-sort_by" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">sort_by</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="sort_by-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 471</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">result</span> = []
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">value</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">result</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-take" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">take</span><span
+            class="method-args">(n)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="take-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 426</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">take</span>(<span class="ruby-identifier">n</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">to_take</span> = <span class="ruby-identifier">n</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">to_take</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                                <span class="ruby-identifier">to_take</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">raise</span> <span class="ruby-constant">StopIteration</span>
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-take_while" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">take_while</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="take_while-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 443</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">take_while</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-constant">Transformer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-operator">*</span><span class="ruby-identifier">values</span><span class="ruby-operator">|</span>
+                        <span class="ruby-keyword">if</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                                <span class="ruby-identifier">y</span>.<span class="ruby-identifier">yield</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+                        <span class="ruby-keyword">else</span>
+                                <span class="ruby-identifier">raise</span> <span class="ruby-constant">StopIteration</span>
+                        <span class="ruby-keyword">end</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_a" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_a</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="to_a-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 484</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_a</span>
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">result</span> = []
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">value</span>
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">result</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_h" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_h</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="to_h-source">
+            <pre><span class="ruby-comment"># File lib/coroutines/base.rb, line 497</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
+        <span class="ruby-constant">Consumer</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">yy</span> = <span class="ruby-constant">Yielder</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">y</span>
+                <span class="ruby-identifier">result</span> = {}
+                <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">define_yield</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">result</span>[<span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>]] = <span class="ruby-identifier">value</span>[<span class="ruby-value">1</span>]
+                        <span class="ruby-identifier">yy</span>
+                <span class="ruby-keyword">end</span>
+                <span class="ruby-ivar">@trans</span>.<span class="ruby-identifier">call</span> <span class="ruby-identifier">yy</span>
+                <span class="ruby-identifier">result</span>
+        <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.2.0.alpha.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

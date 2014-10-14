@@ -228,6 +228,7 @@ Symbol::            define Symbol#to_trans, Symbol#<= and Symbol#>=
 1. {Fork it on Github}[https://github.com/nome/coroutines/fork]
 2. Create your feature branch (<code>git checkout -b my-new-feature</code>)
 3. Commit your changes (<code>git commit -am 'Add some feature'</code>)
-4. Push to the branch (<code>git push origin my-new-feature</code>)
-5. Create new Pull Request
+4. Make sure unit tests pass (<code>gem install --development coroutines; ruby tests/suite.rb</code>)
+5. Push to the branch (<code>git push origin my-new-feature</code>)
+6. Create new Pull Request
 

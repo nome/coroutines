@@ -33,4 +33,5 @@ SPEC = Gem::Specification.new do |s|
 	s.extra_rdoc_files = ["README.rdoc"]
 	s.add_runtime_dependency "lazy_enumerator"
 	s.add_development_dependency "test-unit", "~> 3.0"
+	s.add_development_dependency "coveralls"
 end

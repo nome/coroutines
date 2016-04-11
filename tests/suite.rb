@@ -5,5 +5,7 @@ test_dir = File.join(base_dir, "tests")
 $LOAD_PATH.unshift(lib_dir)
 
 require 'test/unit'
+require 'coveralls'
 
+Coveralls.wear!
 exit Test::Unit::AutoRunner.run(true, test_dir)

@@ -200,10 +200,8 @@ Inspired by {David M. Beazley's Generator Tricks}[http://www.dabeaz.com/generato
 and {Michael Snoyman's conduit package}[https://www.fpcomplete.com/user/snoyberg/library-documentation/conduit-overview] (Haskell).
 
 == Compatibility
-Tested with MRI 1.9.3p484, 2.0.0p384 and 2.2.0dev (trunk 47827) on Linux.
-Should work on other moderately recent versions and other operating systems.
-Will probably not work on all alternative Ruby implementations, because it
-depends on the fiber library.
+Requires Ruby >= 1.9; implementations other than MRI may or may not work
+depending on whether they have full support for fibers.
 
 Requiring 'coroutines' does some monkey patching to various core classes, which
 may be a compatibility issue. It is possible to load just the core module

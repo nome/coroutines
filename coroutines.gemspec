@@ -20,6 +20,7 @@ SPEC = Gem::Specification.new do |s|
 	s.authors  = ["Knut Franke"]
 	s.email    = "knut.franke@gmx.de"
 	s.platform = Gem::Platform::RUBY
+	s.required_ruby_version = '>= 1.9'
 	s.files    = [
 		"lib/coroutines.rb",
 		"lib/coroutines/sink.rb",

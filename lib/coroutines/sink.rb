@@ -116,7 +116,7 @@ module Sink
 			self
 		end
 		def inspect
-			"#<#{@target.inspect}#select>"
+			"#<#{@target.inspect}#input_select>"
 		end
 	end
 
@@ -126,7 +126,7 @@ module Sink
 			self
 		end
 		def inspect
-			"#<#{@target.inspect}#reject>"
+			"#<#{@target.inspect}#input_reject>"
 		end
 	end
 
@@ -148,5 +148,8 @@ module Sink
 			@target.close
 		end
 		include Sink
+		def inspect
+			"#<#{@target.inspect}#input_reduce>"
+		end
 	end
 end

@@ -103,6 +103,7 @@ module Sink
 	class InputMapWrapper < InputWrapper
 		def <<(args)
 			@target << @block.call(args)
+			self
 		end
 		def inspect
 			"#<#{@target.inspect}#input_map>"
@@ -112,6 +113,7 @@ module Sink
 	class InputSelectWrapper < InputWrapper
 		def <<(args)
 			@target << args if @block.call(args)
+			self
 		end
 		def inspect
 			"#<#{@target.inspect}#select>"
@@ -121,6 +123,7 @@ module Sink
 	class InputRejectWrapper < InputWrapper
 		def <<(args)
 			@target << args unless @block.call(args)
+			self
 		end
 		def inspect
 			"#<#{@target.inspect}#reject>"

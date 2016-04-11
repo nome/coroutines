@@ -4,9 +4,12 @@ require 'test/unit'
 class TestCoroutines < Test::Unit::TestCase
 	def test_consumer
 		c = Consumer.new { |y| [ y.await, y.await ] }
+		assert_equal("#<Consumer: 0x#{c.object_id.to_s(16)} (running)>", c.inspect)
 		c << :first << :second
 		assert_equal([:first, :second], c.close)
+		assert_equal([:first, :second], c.close)
 		assert_equal([:first, :second], c.result)
+		assert_equal("#<Consumer: 0x#{c.object_id.to_s(16)} ([:first, :second])>", c.inspect)
 	end
 
 	def counter(start)
@@ -16,8 +19,11 @@ class TestCoroutines < Test::Unit::TestCase
 	end
 	def test_consumer_method
 		c = consum_for :counter, 10
+		i = inspect
+		assert_equal("#<Consumer: #{i}:counter (running)>", c.inspect)
 		c << 10 << 1000 << 10000
 		assert_equal("Final value: 11020", c.close)
+		assert_equal("#<Consumer: #{i}:counter (\"Final value: 11020\")>", c.inspect)
 	end
 
 	def test_transformer
@@ -118,10 +124,13 @@ class TestCoroutines < Test::Unit::TestCase
 
 		assert_equal("2:3:4:", t_s.filter_map{|s| s+":" if s.size < 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
 		assert_equal("2:3:4:", t_s.flat_map{|s| [s,":"] }.in_connect([2,3,4]).out_connect(""))
+		assert_equal("2:3:4:", t_s.flat_map{|s| s+":" }.in_connect([2,3,4]).out_connect(""))
 		assert_equal("2:3:4:", t_s.map{|s| s+":" }.in_connect([2,3,4]).out_connect(""))
 		assert_equal("234", t_s.out_connect("").in_connect([2,3,4]))
 		assert_equal("234", t_s.reduce(:+).in_connect(2..4))
 		assert_equal("abc234", t_s.reduce("abc", :+).in_connect(2..4))
+		assert_raise(ArgumentError) { t_s.reduce }
+		assert_raise(ArgumentError) { t_s.reduce("abc", :+, :-) }
 		assert_equal("234", t_s.reject{|s| s.size >= 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
 		assert_equal("234", t_s.select{|s| s.size < 2}.in_connect([2,12,3,44,56,4]).out_connect(""))
 		assert_equal("12345", t_s.take(5).in_connect(1..Float::INFINITY).out_connect(""))
@@ -130,5 +139,8 @@ class TestCoroutines < Test::Unit::TestCase
 		assert_equal(["c1", "a2", "b3"], t_s.sort_by{|s| s[1] }.in_connect(["a2", "b3", "c1"]))
 		assert_equal(["1","2","3"], t_s.to_a.in_connect(1..3))
 		assert_equal({a: 1, b: 2}, Transformer.new{|y| y << [:a,1] << [:b,2]}.lazy.to_h.in_connect([]))
+
+		lazy_trans = t_s
+		assert_equal(lazy_trans.object_id, lazy_trans.lazy.object_id)
 	end
 end

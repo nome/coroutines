@@ -124,6 +124,9 @@ class TestOperators < Test::Unit::TestCase
 		assert_equal("1,2,3,", "" <= (t2_proc <= t1 <= s))
 		assert_equal("1,2,3,", "" <= (t2_proc <= t1) <= s)
 		assert_equal("1,2,3,", "" <= ((t2_proc <= t1) <= s))
+
+		assert_raise(ArgumentError) { t1_proc <= false }
+		assert_raise(ArgumentError) { t1_proc >= false }
 	end
 
 	def test_transformer_proc_filter
@@ -134,5 +137,25 @@ class TestOperators < Test::Unit::TestCase
 
 	def test_multiple_args
 		assert_equal([[1,2],[3,4]], [[1,2],[3,4]] >= proc{|a,b| [a,b]} >= [])
+	end
+
+	def test_symbol_trans
+		c = [] <= :to_s
+		c << 1 << 4 << 9
+		assert_equal(["1","4","9"], c.close)
+		c = [] <= :to_s
+
+		t = :upcase <= :to_s
+		assert_equal("ABC", "" <= t <= [:a,:b,:c])
+
+		e = :upcase <= ["abc", "def"]
+		assert_equal(["ABC", "DEF"], [] <= e)
+
+		t = :to_s >= :upcase
+		assert_equal("ABC", [:a,:b,:c] >= t >= "")
+
+		c = :to_s >= []
+		c << :a << :b << :c
+		assert_equal(["a","b","c"], c.close)
 	end
 end

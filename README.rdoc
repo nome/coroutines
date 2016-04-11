@@ -1,3 +1,6 @@
+{<img src="https://travis-ci.org/nome/coroutines.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/nome/coroutines]
+{<img src="https://coveralls.io/repos/github/nome/coroutines/badge.svg?branch=master" alt="Coverage Status" />}[https://coveralls.io/github/nome/coroutines?branch=master]
+
 = Coroutines for Ruby
 A library for creating and composing producer/transformer/consumer coroutines.
 Producers are already provided by Ruby's built-in Enumerator class; this
